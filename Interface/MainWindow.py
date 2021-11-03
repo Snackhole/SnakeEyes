@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QSizePolicy, QGridLayout,
 
 from Core.DiceRoller import DiceRoller
 from Interface.Widgets.DieTypeSpinBox import DieTypeSpinBox
+from Interface.Widgets.PresetRollsTreeWidget import PresetRollsTreeWidget
 from SaveAndLoad.SaveAndOpenMixin import SaveAndOpenMixin
 
 
@@ -100,7 +101,43 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.RollButton.setSizePolicy(self.InputsSizePolicy)
         self.RollButton.setStyleSheet(self.RollButtonStyle)
 
-        # TODO:  Preset Rolls interface goes here
+        # Preset Rolls Label
+        self.PresetRollsLabel = QLabel("Preset Rolls")
+        self.PresetRollsLabel.setStyleSheet(self.LabelStyle)
+        self.PresetRollsLabel.setAlignment(QtCore.Qt.AlignCenter)
+
+        # Preset Rolls Tree Widget
+        self.PresetRollsTreeWidget = PresetRollsTreeWidget(self)
+        self.PresetRollsTreeWidget.itemActivated.connect(lambda: self.RollPresetRollAction.trigger())
+
+        # Preset Rolls Buttons
+        self.PresetRollsRollButton = QPushButton("Roll")
+        self.PresetRollsRollButton.clicked.connect(lambda: self.RollPresetRollAction.trigger())
+        self.PresetRollsRollButton.setSizePolicy(self.InputsSizePolicy)
+
+        self.PresetRollsAddButton = QPushButton("+")
+        self.PresetRollsAddButton.clicked.connect(self.AddPresetRoll)
+        self.PresetRollsAddButton.setSizePolicy(self.InputsSizePolicy)
+
+        self.PresetRollsDeleteButton = QPushButton("-")
+        self.PresetRollsDeleteButton.clicked.connect(self.DeletePresetRoll)
+        self.PresetRollsDeleteButton.setSizePolicy(self.InputsSizePolicy)
+
+        self.PresetRollsEditButton = QPushButton("Edit")
+        self.PresetRollsEditButton.clicked.connect(self.EditPresetRoll)
+        self.PresetRollsEditButton.setSizePolicy(self.InputsSizePolicy)
+
+        self.PresetRollsCopyButton = QPushButton("Copy")
+        self.PresetRollsCopyButton.clicked.connect(self.CopyPresetRoll)
+        self.PresetRollsCopyButton.setSizePolicy(self.InputsSizePolicy)
+
+        self.PresetRollsMoveUpButton = QPushButton("\u2191")
+        self.PresetRollsMoveUpButton.clicked.connect(self.MovePresetRollUp)
+        self.PresetRollsMoveUpButton.setSizePolicy(self.InputsSizePolicy)
+
+        self.PresetRollsMoveDownButton = QPushButton("\u2193")
+        self.PresetRollsMoveDownButton.clicked.connect(self.MovePresetRollDown)
+        self.PresetRollsMoveDownButton.setSizePolicy(self.InputsSizePolicy)
 
         # Results Log Label
         self.ResultsLogLabel = QLabel("Results Log")
@@ -127,7 +164,23 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.DiceRollerInputsFrame.setLayout(self.DiceRollerInputsLayout)
         self.Layout.addWidget(self.DiceRollerInputsFrame, 0, 0)
 
-        # TODO:  Preset Rolls layout goes here
+        # Preset Rolls in Layout
+        self.PresetRollsFrame = QFrame()
+        self.PresetRollsFrame.setFrameStyle(QFrame.Panel | QFrame.Plain)
+        self.PresetRollsLayout = QGridLayout()
+        self.PresetRollsLayout.addWidget(self.PresetRollsLabel, 0, 0, 1, 2)
+        self.PresetRollsLayout.addWidget(self.PresetRollsTreeWidget, 1, 0, 7, 1)
+        self.PresetRollsLayout.addWidget(self.PresetRollsRollButton, 1, 1)
+        self.PresetRollsLayout.addWidget(self.PresetRollsAddButton, 2, 1)
+        self.PresetRollsLayout.addWidget(self.PresetRollsDeleteButton, 3, 1)
+        self.PresetRollsLayout.addWidget(self.PresetRollsEditButton, 4, 1)
+        self.PresetRollsLayout.addWidget(self.PresetRollsCopyButton, 5, 1)
+        self.PresetRollsLayout.addWidget(self.PresetRollsMoveUpButton, 6, 1)
+        self.PresetRollsLayout.addWidget(self.PresetRollsMoveDownButton, 7, 1)
+        for Row in range(1, 8):
+            self.PresetRollsLayout.setRowStretch(Row, 1)
+        self.PresetRollsFrame.setLayout(self.PresetRollsLayout)
+        self.Layout.addWidget(self.PresetRollsFrame, 1, 0)
 
         # Results Log Widgets in Layout
         self.ResultsLogFrame = QFrame()
@@ -314,6 +367,24 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         AverageResultText = "The average result of " + str(DiceNumber) + "d" + str(DieType) + ("+" if Modifier >= 0 else "") + str(Modifier) + " is:\n\n" + str(AverageResult)
         self.DisplayMessageBox(AverageResultText)
 
+    def AddPresetRoll(self):
+        pass
+
+    def DeletePresetRoll(self):
+        pass
+
+    def EditPresetRoll(self):
+        pass
+
+    def CopyPresetRoll(self):
+        pass
+
+    def MovePresetRollUp(self):
+        pass
+
+    def MovePresetRollDown(self):
+        pass
+
     def RollPresetRoll(self):
         pass
 
@@ -326,14 +397,12 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
     def NewActionTriggered(self):
         if self.New(self.DiceRoller):
             self.DiceRoller = DiceRoller()
-            # TODO:  self.PresetRollsTreeWidget.DiceRoller = self.DiceRoller
         self.UpdateDisplay()
 
     def OpenActionTriggered(self):
         OpenData = self.Open(self.DiceRoller)
         if OpenData is not None:
             self.DiceRoller = OpenData
-            # TODO:  self.PresetRollsTreeWidget.DiceRoller = OpenData
         self.UpdateDisplay()
 
     def SaveActionTriggered(self):
@@ -384,6 +453,15 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         # Results Log Display
         ResultsLogString = self.DiceRoller.CreateLogText()
         self.ResultsLogTextEdit.setPlainText(ResultsLogString)
+
+        # Fill Preset Rolls Tree Widget
+        CurrentSelection = self.PresetRollsTreeWidget.selectedItems()
+        if len(CurrentSelection) > 0:
+            CurrentSelectionIndex = CurrentSelection[0].Index
+            self.PresetRollsTreeWidget.FillFromPresetRolls()
+            self.PresetRollsTreeWidget.SelectIndex(CurrentSelectionIndex)
+        else:
+            self.PresetRollsTreeWidget.FillFromPresetRolls()
 
         # Update Window Title
         self.UpdateWindowTitle()
