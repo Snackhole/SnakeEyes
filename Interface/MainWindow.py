@@ -303,12 +303,12 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
                 self.DefaultRollData = self.JSONSerializer.DeserializeDataFromJSONString(DefaultRollConfigFile.read())
         else:
             self.DefaultRollData = {}
-            self.DefaultRollData["DiceNumber"] = 1
-            self.DefaultRollData["DieType"] = 20
+            self.DefaultRollData["Dice Number"] = 1
+            self.DefaultRollData["Die Type"] = 20
             self.DefaultRollData["Modifier"] = 0
 
-        self.DiceNumberSpinBox.setValue(self.DefaultRollData["DiceNumber"])
-        self.DieTypeSpinBox.setValue(self.DefaultRollData["DieType"])
+        self.DiceNumberSpinBox.setValue(self.DefaultRollData["Dice Number"])
+        self.DieTypeSpinBox.setValue(self.DefaultRollData["Die Type"])
         self.ModifierSpinBox.setValue(self.DefaultRollData["Modifier"])
 
         # Keybindings
@@ -428,8 +428,8 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         pass
 
     def SetCurrentRollAsDefault(self):
-        self.DefaultRollData["DiceNumber"] = self.DiceNumberSpinBox.value()
-        self.DefaultRollData["DieType"] = self.DieTypeSpinBox.value()
+        self.DefaultRollData["Dice Number"] = self.DiceNumberSpinBox.value()
+        self.DefaultRollData["Die Type"] = self.DieTypeSpinBox.value()
         self.DefaultRollData["Modifier"] = self.ModifierSpinBox.value()
 
     # Save and Open Methods
