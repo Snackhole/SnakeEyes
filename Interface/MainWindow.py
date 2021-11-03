@@ -7,6 +7,7 @@ from PyQt5.QtGui import QIcon, QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow, QApplication, QSizePolicy, QGridLayout, QFrame, QLabel, QPushButton, QTextEdit, QSpinBox, QMessageBox, QAction, QInputDialog
 
 from Core.DiceRoller import DiceRoller
+from Interface.Dialogs.EditPresetRollDialog import EditPresetRollDialog
 from Interface.Widgets.DieTypeSpinBox import DieTypeSpinBox
 from Interface.Widgets.PresetRollsTreeWidget import PresetRollsTreeWidget
 from SaveAndLoad.SaveAndOpenMixin import SaveAndOpenMixin
@@ -368,13 +369,36 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.DisplayMessageBox(AverageResultText)
 
     def AddPresetRoll(self):
-        pass
+        PresetRollIndex = self.DiceRoller.AddPresetRoll()
+        self.UpdateDisplay()
+        EditPresetRollDialogInst = EditPresetRollDialog(self, PresetRollIndex, AddMode=True)
+        if EditPresetRollDialogInst.Cancelled:
+            self.DiceRoller.DeleteLastPresetRoll()
+            self.UpdateDisplay()
+        else:
+            self.UpdateUnsavedChangesFlag(True)
+            self.PresetRollsTreeWidget.SelectIndex(PresetRollIndex)
 
     def DeletePresetRoll(self):
-        pass
+        CurrentSelection = self.PresetRollsTreeWidget.selectedItems()
+        if len(CurrentSelection) > 0:
+            if self.DisplayMessageBox("Are you sure you want to delete this preset roll?  This cannot be undone.", Icon=QMessageBox.Question, Buttons=(QMessageBox.Yes | QMessageBox.No)) == QMessageBox.Yes:
+                CurrentPresetRoll = CurrentSelection[0]
+                CurrentPresetRollIndex = CurrentPresetRoll.Index
+                self.DiceRoller.DeletePresetRoll(CurrentPresetRollIndex)
+                self.UpdateUnsavedChangesFlag(True)
+                PresetRollsLength = len(self.DiceRoller.PresetRolls)
+                if PresetRollsLength > 0:
+                    self.PresetRollsTreeWidget.SelectIndex(CurrentPresetRollIndex if CurrentPresetRollIndex < PresetRollsLength else PresetRollsLength - 1)
 
     def EditPresetRoll(self):
-        pass
+        CurrentSelection = self.PresetRollsTreeWidget.selectedItems()
+        if len(CurrentSelection) > 0:
+            CurrentPresetRoll = CurrentSelection[0]
+            CurrentPresetRollIndex = CurrentPresetRoll.Index
+            EditPresetRollDialogInst = EditPresetRollDialog(self, CurrentPresetRollIndex)
+            if EditPresetRollDialogInst.UnsavedChanges:
+                self.UpdateUnsavedChangesFlag(True)
 
     def CopyPresetRoll(self):
         pass

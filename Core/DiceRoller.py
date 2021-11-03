@@ -94,6 +94,10 @@ class DiceRoller(SerializableMixin):
     def DeletePresetRoll(self, PresetRollIndex):
         del self.PresetRolls[PresetRollIndex]
 
+    def DeleteLastPresetRoll(self):
+        PresetRollIndex = len(self.PresetRolls) - 1
+        self.DeletePresetRoll(PresetRollIndex)
+
     def CopyPresetRoll(self, PresetRollIndex):
         self.PresetRolls.append(copy.deepcopy(self.PresetRolls[PresetRollIndex]))
         NewPresetRollIndex = len(self.PresetRolls) - 1
