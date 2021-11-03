@@ -4,6 +4,7 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QGridLayout, QPushButton, QSpinBox, QSizePolicy, QMessageBox
 
 from Interface.Widgets.DieTypeSpinBox import DieTypeSpinBox
+from Interface.Widgets.ResultMessagesTreeWidget import ResultMessagesTreeWidget
 
 
 class EditPresetRollDialog(QDialog):
@@ -58,7 +59,8 @@ class EditPresetRollDialog(QDialog):
         self.ModifierSpinBox.setValue(self.PresetRoll["Modifier"])
         self.ModifierSpinBox.valueChanged.connect(self.UpdatePresetRoll)
 
-        # TODO:  Result Messages Tree Widget
+        # Result Messages Tree Widget
+        self.ResultMessagesTreeWidget = ResultMessagesTreeWidget(self)
 
         # Buttons
         self.AddResultMessageButton = QPushButton("+")
@@ -73,6 +75,12 @@ class EditPresetRollDialog(QDialog):
         self.CopyResultMessageButton = QPushButton("Copy")
         self.CopyResultMessageButton.clicked.connect(self.CopyResultMessage)
         self.CopyResultMessageButton.setSizePolicy((self.InputsSizePolicy))
+        self.ResultMessageMoveUpButton = QPushButton("\u2191")
+        self.ResultMessageMoveUpButton.clicked.connect(self.MoveResultMessageUp)
+        self.ResultMessageMoveUpButton.setSizePolicy(self.InputsSizePolicy)
+        self.ResultMessageMoveDownButton = QPushButton("\u2193")
+        self.ResultMessageMoveDownButton.clicked.connect(self.MoveResultMessageDown)
+        self.ResultMessageMoveDownButton.setSizePolicy(self.InputsSizePolicy)
         self.DoneButton = QPushButton("Done")
         self.DoneButton.clicked.connect(self.Done)
         self.DoneButton.setDefault(True)
@@ -100,15 +108,19 @@ class EditPresetRollDialog(QDialog):
         self.Layout.addLayout(self.DiceInputsLayout, 2, 0, 1, 2)
         self.ResultMessagesLayout = QGridLayout()
         self.ResultMessagesLayout.addWidget(self.ResultMessagesLabel, 0, 0)
-        # TODO:  self.ResultMessagesLayout.addWidget(self.ResultMessagesTreeWidget, 1, 0, 4, 1)
+        self.ResultMessagesLayout.addWidget(self.ResultMessagesTreeWidget, 1, 0, 6, 1)
         self.ResultMessagesLayout.addWidget(self.AddResultMessageButton, 1, 1)
         self.ResultMessagesLayout.addWidget(self.DeleteResultMessageButton, 2, 1)
         self.ResultMessagesLayout.addWidget(self.EditResultMessageButton, 3, 1)
         self.ResultMessagesLayout.addWidget(self.CopyResultMessageButton, 4, 1)
+        self.ResultMessagesLayout.addWidget(self.ResultMessageMoveUpButton, 5, 1)
+        self.ResultMessagesLayout.addWidget(self.ResultMessageMoveDownButton, 6, 1)
         self.ResultMessagesLayout.setRowStretch(1, 1)
         self.ResultMessagesLayout.setRowStretch(2, 1)
         self.ResultMessagesLayout.setRowStretch(3, 1)
         self.ResultMessagesLayout.setRowStretch(4, 1)
+        self.ResultMessagesLayout.setRowStretch(5, 1)
+        self.ResultMessagesLayout.setRowStretch(6, 1)
         self.Layout.addLayout(self.ResultMessagesLayout, 3, 0, 1, 2)
         self.Layout.addWidget(self.DoneButton, 4, 0)
         self.Layout.addWidget(self.CancelButton, 4, 1)
@@ -135,7 +147,16 @@ class EditPresetRollDialog(QDialog):
 
     def CopyResultMessage(self):
         pass
-    
+
+    def MoveResultMessageUp(self):
+        self.MoveResultMessage(-1)
+
+    def MoveResultMessageDown(self):
+        self.MoveResultMessage(1)
+
+    def MoveResultMessage(self, Delta):
+        pass
+
     def UpdatePresetRoll(self):
         self.PresetRoll["Name"] = self.NameLineEdit.text()
         self.PresetRoll["Dice Number"] = self.DiceNumberSpinBox.value()
@@ -160,5 +181,4 @@ class EditPresetRollDialog(QDialog):
         return True
 
     def UpdateDisplay(self):
-        pass
-        # TODO:  self.ResultMessagesTreeWidget.FillFromResultMessages()
+        self.ResultMessagesTreeWidget.FillFromResultMessages()
