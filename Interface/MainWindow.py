@@ -284,7 +284,9 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         with open(self.GetResourcePath("Configs/DefaultRoll.cfg"), "w") as DefaultRollConfigFile:
             DefaultRollConfigFile.write(json.dumps(self.DefaultRollData))
 
-        # TODO:  Keybindings saved
+        # Keybindings
+        with open(self.GetResourcePath("Configs/Keybindings.cfg"), "w") as ConfigFile:
+            ConfigFile.write(json.dumps(self.Keybindings, indent=2))
 
         # Theme
         with open(self.GetResourcePath("Configs/Theme.cfg"), "w") as ConfigFile:
