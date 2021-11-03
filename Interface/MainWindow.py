@@ -401,7 +401,13 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
                 self.UpdateUnsavedChangesFlag(True)
 
     def CopyPresetRoll(self):
-        pass
+        CurrentSelection = self.PresetRollsTreeWidget.selectedItems()
+        if len(CurrentSelection) > 0:
+            CurrentPresetRoll = CurrentSelection[0]
+            CurrentPresetRollIndex = CurrentPresetRoll.Index
+            NewPresetRollIndex = self.DiceRoller.CopyPresetRoll(CurrentPresetRollIndex)
+            self.UpdateUnsavedChangesFlag(True)
+            self.PresetRollsTreeWidget.SelectIndex(NewPresetRollIndex)
 
     def MovePresetRollUp(self):
         pass
