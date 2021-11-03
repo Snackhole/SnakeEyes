@@ -1,9 +1,14 @@
 import copy
 import random
 
+from SaveAndLoad.JSONSerializer import SerializableMixin
 
-class DiceRoller:
+
+class DiceRoller(SerializableMixin):
     def __init__(self):
+        # Initialize SerializableMixin
+        super().__init__()
+
         # Randomizer
         self.Randomizer = random.Random()
 
@@ -160,3 +165,24 @@ class DiceRoller:
 
     def ClearLog(self):
         self.ResultsLog.clear()
+
+    # Serialization Methods
+    def SetState(self, NewState):
+        self.PresetRolls = NewState["PresetRolls"]
+        self.PresetRollsDefaults = NewState["PresetRollsDefaults"]
+        self.ResultMessageDefaults = NewState["ResultMessageDefaults"]
+        self.ResultsLog = NewState["ResultsLog"]
+
+    def GetState(self):
+        State = {}
+        State["PresetRolls"] = self.PresetRolls
+        State["PresetRollsDefaults"] = self.PresetRollsDefaults
+        State["ResultMessageDefaults"] = self.ResultMessageDefaults
+        State["ResultsLog"] = self.ResultsLog
+        return State
+
+    @classmethod
+    def CreateFromState(cls, State):
+        NewDiceRoller = cls()
+        NewDiceRoller.SetState(State)
+        return NewDiceRoller
