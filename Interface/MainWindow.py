@@ -429,7 +429,13 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
                 self.PresetRollsTreeWidget.SelectIndex(CurrentPresetRollIndex + Delta)
 
     def RollPresetRoll(self):
-        pass
+        CurrentSelection = self.PresetRollsTreeWidget.selectedItems()
+        if len(CurrentSelection) > 0:
+            CurrentPresetRoll = CurrentSelection[0]
+            CurrentPresetRollIndex = CurrentPresetRoll.Index
+            self.DiceRoller.RollPresetRoll(CurrentPresetRollIndex)
+            self.UpdateUnsavedChangesFlag(True)
+            self.PresetRollsTreeWidget.SelectIndex(CurrentPresetRollIndex)
 
     def SetCurrentRollAsDefault(self):
         self.DefaultRollData["Dice Number"] = self.DiceNumberSpinBox.value()
