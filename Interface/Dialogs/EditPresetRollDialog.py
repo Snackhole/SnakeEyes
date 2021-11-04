@@ -192,7 +192,14 @@ class EditPresetRollDialog(QDialog):
         self.MoveResultMessage(1)
 
     def MoveResultMessage(self, Delta):
-        pass
+        CurrentSelection = self.ResultMessagesTreeWidget.selectedItems()
+        if len(CurrentSelection) > 0:
+            CurrentResultMessage = CurrentSelection[0]
+            CurrentResultMessageIndex = CurrentResultMessage.Index
+            if self.MainWindow.DiceRoller.MoveResultMessage(self.PresetRollIndex, CurrentResultMessageIndex, Delta):
+                self.UnsavedChanges = True
+                self.UpdateDisplay()
+                self.ResultMessagesTreeWidget.SelectIndex(CurrentResultMessageIndex + Delta)
 
     def UpdatePresetRoll(self):
         self.PresetRoll["Name"] = self.NameLineEdit.text()
