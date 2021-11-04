@@ -79,6 +79,7 @@ class EditResultMessageDialog(QDialog):
         self.ResultMessage["Result Min"] = self.ResultMinSpinBox.value()
         self.ResultMessage["Result Max"] = self.ResultMaxSpinBox.value()
         self.ResultMessage["Result Text"] = self.ResultTextLineEdit.text()
+        self.UnsavedChanges = True
 
     def Done(self):
         if self.ValidInput():
