@@ -249,6 +249,9 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.SetCurrentRollAsDefaultAction = QAction("Set Current Roll as Default")
         self.SetCurrentRollAsDefaultAction.triggered.connect(self.SetCurrentRollAsDefault)
 
+        self.AddLogEntryAction = QAction("Add Log Entry")
+        self.AddLogEntryAction.triggered.connect(self.AddLogEntry)
+
         self.RemoveLastLogEntryAction = QAction("Remove Last Log Entry")
         self.RemoveLastLogEntryAction.triggered.connect(self.RemoveLastLogEntry)
 
@@ -278,6 +281,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.RollerMenu.addAction(self.SetCurrentRollAsDefaultAction)
 
         self.LogMenu = self.MenuBar.addMenu("Log")
+        self.LogMenu.addAction(self.AddLogEntryAction)
         self.LogMenu.addAction(self.RemoveLastLogEntryAction)
         self.LogMenu.addAction(self.ClearLogAction)
 
@@ -477,6 +481,15 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.UpdateDisplay()
 
     # Log Menu Action Methods
+    def AddLogEntry(self):
+        LogText, OK = QInputDialog.getText(self, "Add Log Entry", "Add text to log:")
+        if OK:
+            if LogText == "":
+                self.DisplayMessageBox("Log entries cannot be blank.")
+                return
+            self.DiceRoller.AddLogEntry(LogText)
+            self.UpdateUnsavedChangesFlag(True)
+
     def RemoveLastLogEntry(self):
         if self.DisplayMessageBox("Are you sure you want to remove the last log entry?  This cannot be undone.", Icon=QMessageBox.Question, Buttons=(QMessageBox.Yes | QMessageBox.No)) == QMessageBox.Yes:
             self.DiceRoller.RemoveLastLogEntry()

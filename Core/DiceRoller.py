@@ -163,11 +163,14 @@ class DiceRoller(SerializableMixin):
 
     def CreateLogText(self):
         LogText = ""
-        for Results in reversed(self.ResultsLog):
-            LogText += Results
-            if not Results is self.ResultsLog[0]:
+        for ResultsIndex in reversed(range(len(self.ResultsLog))):
+            LogText += self.ResultsLog[ResultsIndex]
+            if not ResultsIndex == 0:
                 LogText += "\n\n---\n\n"
         return LogText
+
+    def AddLogEntry(self, LogText):
+        self.ResultsLog.append(LogText)
 
     def RemoveLastLogEntry(self):
         self.ResultsLog = self.ResultsLog[:-1]
