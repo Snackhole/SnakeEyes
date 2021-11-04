@@ -176,7 +176,14 @@ class EditPresetRollDialog(QDialog):
                 self.UpdateDisplay()
 
     def CopyResultMessage(self):
-        pass
+        CurrentSelection = self.ResultMessagesTreeWidget.selectedItems()
+        if len(CurrentSelection) > 0:
+            CurrentResultMessage = CurrentSelection[0]
+            CurrentResultMessageIndex = CurrentResultMessage.Index
+            NewResultMessageIndex = self.MainWindow.DiceRoller.CopyResultMessage(self.PresetRollIndex, CurrentResultMessageIndex)
+            self.UnsavedChanges = True
+            self.UpdateDisplay()
+            self.ResultMessagesTreeWidget.SelectIndex(NewResultMessageIndex)
 
     def MoveResultMessageUp(self):
         self.MoveResultMessage(-1)
