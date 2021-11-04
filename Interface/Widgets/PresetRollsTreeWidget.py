@@ -11,6 +11,7 @@ class PresetRollsTreeWidget(QTreeWidget):
         # Header Setup
         self.setHeaderHidden(True)
         self.setRootIsDecorated(False)
+        self.header().setStretchLastSection(False)
         self.header().setSectionResizeMode(QHeaderView.ResizeToContents)
 
     def FillFromPresetRolls(self):
@@ -22,6 +23,7 @@ class PresetRollsTreeWidget(QTreeWidget):
         DestinationIndex = self.model().index(Index, 0)
         self.setCurrentIndex(DestinationIndex)
         self.scrollToItem(self.currentItem(), self.PositionAtCenter)
+        self.horizontalScrollBar().setValue(0)
 
 
 class PresetRollsWidgetItem(QTreeWidgetItem):
@@ -34,3 +36,4 @@ class PresetRollsWidgetItem(QTreeWidgetItem):
 
         # Set Text
         self.setText(0, self.PresetRoll["Name"])
+        self.setToolTip(0, self.PresetRoll["Name"])

@@ -11,6 +11,7 @@ class ResultMessagesTreeWidget(QTreeWidget):
         # Header Setup
         self.setHeaderHidden(True)
         self.setRootIsDecorated(False)
+        self.header().setStretchLastSection(False)
         self.header().setSectionResizeMode(QHeaderView.ResizeToContents)
 
     def FillFromResultMessages(self):
@@ -22,6 +23,7 @@ class ResultMessagesTreeWidget(QTreeWidget):
         DestinationIndex = self.model().index(Index, 0)
         self.setCurrentIndex(DestinationIndex)
         self.scrollToItem(self.currentItem(), self.PositionAtCenter)
+        self.horizontalScrollBar().setValue(0)
 
 
 class ResultMessagesWidgetItem(QTreeWidgetItem):
@@ -42,3 +44,4 @@ class ResultMessagesWidgetItem(QTreeWidgetItem):
 
         # Set Text
         self.setText(0, ItemText)
+        self.setToolTip(0, ItemText)
