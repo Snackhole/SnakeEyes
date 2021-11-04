@@ -131,6 +131,11 @@ class DiceRoller(SerializableMixin):
         PresetRoll = self.PresetRolls[PresetRollIndex]
         del PresetRoll["Result Messages"][ResultMessageIndex]
 
+    def DeleteLastResultMessage(self, PresetRollIndex):
+        PresetRoll = self.PresetRolls[PresetRollIndex]
+        ResultMessageIndex = len(PresetRoll["Result Messages"]) - 1
+        self.DeleteResultMessage(PresetRollIndex, ResultMessageIndex)
+
     def CopyResultMessage(self, PresetRollIndex, ResultMessageIndex):
         PresetRoll = self.PresetRolls[PresetRollIndex]
         PresetRoll["Result Messages"].append(copy.deepcopy(PresetRoll["Result Messages"][ResultMessageIndex]))

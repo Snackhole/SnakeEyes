@@ -3,20 +3,21 @@ import copy
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QGridLayout, QPushButton, QSpinBox, QSizePolicy, QMessageBox
 
+from Interface.Dialogs.EditResultMessageDialog import EditResultMessageDialog
 from Interface.Widgets.DieTypeSpinBox import DieTypeSpinBox
 from Interface.Widgets.ResultMessagesTreeWidget import ResultMessagesTreeWidget
 
 
 class EditPresetRollDialog(QDialog):
-    def __init__(self, DiceRollerWindow, PresetRollIndex, AddMode=False):
-        super().__init__(parent=DiceRollerWindow)
+    def __init__(self, MainWindow, PresetRollIndex, AddMode=False):
+        super().__init__(parent=MainWindow)
 
         # Store Parameters
-        self.DiceRollerWindow = DiceRollerWindow
+        self.MainWindow = MainWindow
         self.PresetRollIndex = PresetRollIndex
 
         # Variables
-        self.PresetRoll = self.DiceRollerWindow.DiceRoller.PresetRolls[self.PresetRollIndex]
+        self.PresetRoll = self.MainWindow.DiceRoller.PresetRolls[self.PresetRollIndex]
         self.PresetRollOriginalState = copy.deepcopy(self.PresetRoll)
         self.UnsavedChanges = False
         self.Cancelled = False
@@ -127,17 +128,29 @@ class EditPresetRollDialog(QDialog):
         self.setLayout(self.Layout)
 
         # Set Window Title and Icon
-        self.setWindowTitle(self.DiceRollerWindow.ScriptName)
-        self.setWindowIcon(self.DiceRollerWindow.WindowIcon)
+        self.setWindowTitle(self.MainWindow.ScriptName)
+        self.setWindowIcon(self.MainWindow.WindowIcon)
 
         # Update Display
         self.UpdateDisplay()
+
+        # Select Text in Name Line Edit
+        self.NameLineEdit.selectAll()
 
         # Execute Dialog
         self.exec_()
 
     def AddResultMessage(self):
-        pass
+        ResultMessageIndex = self.MainWindow.DiceRoller.AddResultMessage(self.PresetRollIndex)
+        self.UpdateDisplay()
+        EditResultMessageDialogInst = EditResultMessageDialog(self, ResultMessageIndex, AddMode=True)
+        if EditResultMessageDialogInst.Cancelled:
+            self.MainWindow.DiceRoller.DeleteLastResultMessage(self.PresetRollIndex)
+            self.UpdateDisplay()
+        else:
+            self.UnsavedChanges = True
+            self.UpdateDisplay()
+            self.ResultMessagesTreeWidget.SelectIndex(ResultMessageIndex)
 
     def DeleteResultMessage(self):
         pass
@@ -169,14 +182,14 @@ class EditPresetRollDialog(QDialog):
             self.close()
 
     def Cancel(self):
-        self.DiceRollerWindow.DiceRoller.PresetRolls[self.PresetRollIndex] = self.PresetRollOriginalState
+        self.MainWindow.DiceRoller.PresetRolls[self.PresetRollIndex] = self.PresetRollOriginalState
         self.UnsavedChanges = False
         self.Cancelled = True
         self.close()
 
     def ValidInput(self):
         if self.NameLineEdit.text() == "":
-            self.DiceRollerWindow.DisplayMessageBox("Preset rolls must have a name.", Icon=QMessageBox.Warning, Parent=self)
+            self.MainWindow.DisplayMessageBox("Preset rolls must have a name.", Icon=QMessageBox.Warning, Parent=self)
             return False
         return True
 
