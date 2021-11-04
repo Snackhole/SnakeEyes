@@ -77,12 +77,7 @@ class DiceRoller(SerializableMixin):
 
     # Preset Roll Methods
     def CreatePresetRoll(self):
-        PresetRoll = {}
-        PresetRoll["Name"] = self.PresetRollsDefaults["Name"]
-        PresetRoll["Dice Number"] = self.PresetRollsDefaults["Dice Number"]
-        PresetRoll["Die Type"] = self.PresetRollsDefaults["Die Type"]
-        PresetRoll["Modifier"] = self.PresetRollsDefaults["Modifier"]
-        PresetRoll["Result Messages"] = self.PresetRollsDefaults["Result Messages"]
+        PresetRoll = copy.deepcopy(self.PresetRollsDefaults)
         return PresetRoll
 
     def AddPresetRoll(self):
@@ -114,10 +109,7 @@ class DiceRoller(SerializableMixin):
 
     # Result Message Methods
     def CreateResultMessage(self):
-        ResultMessage = {}
-        ResultMessage["Result Min"] = self.ResultMessageDefaults["Result Min"]
-        ResultMessage["Result Max"] = self.ResultMessageDefaults["Result Max"]
-        ResultMessage["Result Text"] = self.ResultMessageDefaults["Result Text"]
+        ResultMessage = copy.deepcopy(self.ResultMessageDefaults)
         return ResultMessage
 
     def AddResultMessage(self, PresetRollIndex):
