@@ -15,8 +15,8 @@ class ResultMessagesTreeWidget(QTreeWidget):
 
     def FillFromResultMessages(self):
         self.clear()
-        for ResultMessage in self.EditPresetRollDialogInst.PresetRoll["Result Messages"]:
-            self.invisibleRootItem().addChild(ResultMessagesWidgetItem(ResultMessage))
+        for ResultMessageIndex in range(len(self.EditPresetRollDialogInst.PresetRoll["Result Messages"])):
+            self.invisibleRootItem().addChild(ResultMessagesWidgetItem(ResultMessageIndex, self.EditPresetRollDialogInst.PresetRoll["Result Messages"][ResultMessageIndex]))
 
     def SelectIndex(self, Index):
         DestinationIndex = self.model().index(Index, 0)
@@ -25,10 +25,11 @@ class ResultMessagesTreeWidget(QTreeWidget):
 
 
 class ResultMessagesWidgetItem(QTreeWidgetItem):
-    def __init__(self, ResultMessage):
+    def __init__(self, Index, ResultMessage):
         super().__init__()
 
         # Store Parameters
+        self.Index = Index
         self.ResultMessage = ResultMessage
 
         # Determine Item Text

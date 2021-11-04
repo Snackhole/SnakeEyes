@@ -153,7 +153,17 @@ class EditPresetRollDialog(QDialog):
             self.ResultMessagesTreeWidget.SelectIndex(ResultMessageIndex)
 
     def DeleteResultMessage(self):
-        pass
+        CurrentSelection = self.ResultMessagesTreeWidget.selectedItems()
+        if len(CurrentSelection) > 0:
+            if self.MainWindow.DisplayMessageBox("Are you sure you want to delete this result message?  This cannot be undone.", Icon=QMessageBox.Question, Buttons=(QMessageBox.Yes | QMessageBox.No)) == QMessageBox.Yes:
+                CurrentResultMessage = CurrentSelection[0]
+                CurrentResultMessageIndex = CurrentResultMessage.Index
+                self.MainWindow.DiceRoller.DeleteResultMessage(self.PresetRollIndex, CurrentResultMessageIndex)
+                self.UnsavedChanges = True
+                self.UpdateDisplay()
+                ResultMessagesLength = len(self.PresetRoll["Result Messages"])
+                if ResultMessagesLength > 0:
+                    self.ResultMessagesTreeWidget.SelectIndex(CurrentResultMessageIndex if CurrentResultMessageIndex < ResultMessagesLength else ResultMessagesLength - 1)
 
     def EditResultMessage(self):
         pass
