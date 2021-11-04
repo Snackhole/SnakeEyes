@@ -1,5 +1,5 @@
 # SnakeEyes
-SnakeEyes is a dice rolling app for playing tabletop roleplaying games, written in Python 3.8 with PyQT5.  It is capable of saving and rolling preset dice as well as any other dice, including non-physical dice, and can also be used to roll on tables and present the results.
+SnakeEyes is a dice rolling app for playing tabletop roleplaying games, written in Python 3.8 with PyQT5.  It is capable of saving and rolling preset dice as well as any other dice, including non-standard dice, and can also be used to roll on tables and present the results.  There is also a function to generate die clocks, which are series of preset rolls representing values on a clock to track the passing of time and prompt the introduction of complications.  At the end of this readme is a short set of rules for using die clocks in gameplay.
 
 ## Installation
 Because SnakeEyes is written in 64-bit Python and packaged as an executable zip, a 64-bit Python 3 installation is required to run it.  It was written and tested in Python 3.8, though it may or may not run in other versions of Python 3.
@@ -35,3 +35,27 @@ The `Configs` folder should be left in place as it stores settings and contexts 
 Uninstalling SnakeEyes itself only requires deleting the directory you extracted it to, along with any shortcuts you created.
 
 If you need to uninstall Python 3.8 or, on Linux, PyQT5, consult their documentation.
+
+## Die Clocks
+The following rules describe a simple, abstract mechanic to loosely track time pressure and introduce complications in stressful situations, like exploring monster-infested ruins or trying to track down kidnappers before they get away with their hostage.
+
+A die clock is first defined by a particular die, like a d6 or a d20.  The clock starts at 0, has a maximum value equal to the maximum roll possible on the die, and has a complication threshold somewhere between the two.  As the party takes actions that require appreciable time, like checking for traps, looking for clues, moving from area to area, and so on, the die clock increases, usually by 1.  The die clock usually does not increase as a result of combat encounters, unless the explicit goal of the party's foes is to slow them down or distract them from some other pressing problem.
+
+The time it takes for the die clock to increase is purposefully nebulous to allow for flexibility, but in most situations would correspond to somewhere between five and ten minutes; after the die clock increases six times, assume an hour has passed.  The GM can also use die clocks to track the passage of longer spans of time, like hours, days, weeks, and so on.
+
+After the clock increases, if it equals or exceeds its complication threshold, a player or the GM rolls the clock's die.  If the result equals or exceeds the current value of the clock, nothing happens.  Otherwise, the clock goes off.  If the clock is at its maximum value, it automatically goes off without a roll.
+
+When the clock goes off, the GM presents the party with a complication of some kind, most often an encounter or something else that would logically result from the party spending time.  The GM can also use a GM intrusion to set off the clock, regardless of its source.
+
+Once the clock has gone off, it resets to 0, and continues as before, increasing as actions are taken under some kind of time pressure or in a dangerous location, potentially going off multiple times.  This continues until the GM decides that the pressure no longer applies, either because of some kind of resolution or because the party leaves the dangerous situation.
+
+If the GM determines that the party is in a particularly dangerous situation, drawing too much attention, or otherwise behaving recklessly, the clock might increase by higher values per action, hastening its going off.  The GM also sets the complication threshold; lower thresholds correspond to more uncertainty and more frequent complications, while higher thresholds represent more stable and predictable situations.  Consult the following table for a general idea of how clock increase values and complication thresholds interact:
+
+|  | Low Complication Threshold | High Complication Threshold |
+| :-- | :-- | :-- |
+| **Low Increases** | Unpredictable, less frequent complications | Predictable, less frequent complications |
+| **High Increases** | Unpredictable, more frequent complications | Predictable, more frequent complications |
+
+The size of the die determines the granularity of the clock's values, allowing the GM more flexibility in determining how the party's actions and circumstances affect the clock.
+
+The GM should prepare for a session using a die clock by experimenting with its die, complication threshold, and increase values to get the right feel for the situation.
