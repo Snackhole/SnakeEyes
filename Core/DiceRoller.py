@@ -107,6 +107,38 @@ class DiceRoller(SerializableMixin):
         self.PresetRolls[PresetRollIndex] = SwapTarget
         return True
 
+    def CreateDieClock(self, Name, DieType, ComplicationThreshold):
+        DieClockPresetRolls = []
+        for ClockValue in range(DieType + 1):
+            CurrentClockValuePresetRoll = self.CreatePresetRoll()
+            CurrentClockValuePresetRoll["Name"] = Name + "; Current Value:  " + str(ClockValue) + (" (Complication Threshold)" if ClockValue == ComplicationThreshold else "") + (" (Beyond Complication Threshold)" if ClockValue > ComplicationThreshold else "")
+            CurrentClockValuePresetRoll["Die Type"] = DieType
+            DieClockPresetRolls.append(CurrentClockValuePresetRoll)
+            if ClockValue < ComplicationThreshold:
+                BelowThresholdResultMessage = self.CreateResultMessage()
+                BelowThresholdResultMessage["Result Min"] = 1
+                BelowThresholdResultMessage["Result Max"] = DieType
+                BelowThresholdResultMessage["Result Text"] = Name + " does not go off; current value below complication threshold."
+                CurrentClockValuePresetRoll["Result Messages"].append(BelowThresholdResultMessage)
+            elif ClockValue >= ComplicationThreshold and ClockValue != DieType:
+                AboveThresholdLowerRollResultMessage = self.CreateResultMessage()
+                AboveThresholdLowerRollResultMessage["Result Min"] = 1
+                AboveThresholdLowerRollResultMessage["Result Max"] = ClockValue - 1
+                AboveThresholdLowerRollResultMessage["Result Text"] = "Current clock value exceeds roll result; " + Name + " goes off!"
+                AboveThresholdHigherRollResultMessage = self.CreateResultMessage()
+                AboveThresholdHigherRollResultMessage["Result Min"] = ClockValue
+                AboveThresholdHigherRollResultMessage["Result Max"] = DieType
+                AboveThresholdHigherRollResultMessage["Result Text"] = "Roll result equals or exceeds current clock value; " + Name + " does not go off."
+                CurrentClockValuePresetRoll["Result Messages"].append(AboveThresholdLowerRollResultMessage)
+                CurrentClockValuePresetRoll["Result Messages"].append(AboveThresholdHigherRollResultMessage)
+            else:
+                MaximumClockValueResultMessage = self.CreateResultMessage()
+                MaximumClockValueResultMessage["Result Min"] = 1
+                MaximumClockValueResultMessage["Result Max"] = DieType
+                MaximumClockValueResultMessage["Result Text"] = Name + " at maximum value; " + Name + " goes off!"
+                CurrentClockValuePresetRoll["Result Messages"].append(MaximumClockValueResultMessage)
+        self.PresetRolls = self.PresetRolls + DieClockPresetRolls
+
     # Result Message Methods
     def CreateResultMessage(self):
         ResultMessage = copy.deepcopy(self.ResultMessageDefaults)

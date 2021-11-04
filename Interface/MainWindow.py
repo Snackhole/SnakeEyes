@@ -7,6 +7,7 @@ from PyQt5.QtGui import QIcon, QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow, QApplication, QSizePolicy, QGridLayout, QFrame, QLabel, QPushButton, QTextEdit, QSpinBox, QMessageBox, QAction, QInputDialog
 
 from Core.DiceRoller import DiceRoller
+from Interface.Dialogs.CreateDieClockDialog import CreateDieClockDialog
 from Interface.Dialogs.EditPresetRollDialog import EditPresetRollDialog
 from Interface.Widgets.DieTypeSpinBox import DieTypeSpinBox
 from Interface.Widgets.PresetRollsTreeWidget import PresetRollsTreeWidget
@@ -249,6 +250,9 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.SetCurrentRollAsDefaultAction = QAction("Set Current Roll as Default")
         self.SetCurrentRollAsDefaultAction.triggered.connect(self.SetCurrentRollAsDefault)
 
+        self.CreateDieClockAction = QAction("Create Die Clock")
+        self.CreateDieClockAction.triggered.connect(self.CreateDieClock)
+
         self.AddLogEntryAction = QAction("Add Log Entry")
         self.AddLogEntryAction.triggered.connect(self.AddLogEntry)
 
@@ -279,6 +283,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.RollerMenu.addAction(self.RollPresetRollAction)
         self.RollerMenu.addAction(self.AverageRollAction)
         self.RollerMenu.addAction(self.SetCurrentRollAsDefaultAction)
+        self.RollerMenu.addAction(self.CreateDieClockAction)
 
         self.LogMenu = self.MenuBar.addMenu("Log")
         self.LogMenu.addAction(self.AddLogEntryAction)
@@ -441,6 +446,14 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.DefaultRollData["Dice Number"] = self.DiceNumberSpinBox.value()
         self.DefaultRollData["Die Type"] = self.DieTypeSpinBox.value()
         self.DefaultRollData["Modifier"] = self.ModifierSpinBox.value()
+
+    def CreateDieClock(self):
+        CreateDieClockDialogInst = CreateDieClockDialog(self)
+        if CreateDieClockDialogInst.Submitted:
+            DieClockPresetRollIndex = len(self.DiceRoller.PresetRolls)
+            self.DiceRoller.CreateDieClock(CreateDieClockDialogInst.Name, CreateDieClockDialogInst.DieType, CreateDieClockDialogInst.ComplicationThreshold)
+            self.UpdateUnsavedChangesFlag(True)
+            self.PresetRollsTreeWidget.SelectIndex(DieClockPresetRollIndex)
 
     # Save and Open Methods
     def NewActionTriggered(self):
