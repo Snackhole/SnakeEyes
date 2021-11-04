@@ -17,7 +17,7 @@ class DiceRoller(SerializableMixin):
         self.PresetRollsDefaults = {}
         self.PresetRollsDefaults["Name"] = "New Preset Roll"
         self.PresetRollsDefaults["Dice Number"] = 1
-        self.PresetRollsDefaults["Die Type"] = 6
+        self.PresetRollsDefaults["Die Type"] = 20
         self.PresetRollsDefaults["Modifier"] = 0
         self.PresetRollsDefaults["Result Messages"] = []
         self.ResultMessageDefaults = {}
