@@ -59,7 +59,7 @@ class DiceRoller(SerializableMixin):
                     Results["Log Suffix"] += "\n" + ResultMessage["Result Text"]
 
             # Add to Log
-            self.ResultsLog.append(Results)
+            self.ResultsLog.append(self.CreateLogEntryText(Results))
 
         return Results
 
@@ -153,19 +153,19 @@ class DiceRoller(SerializableMixin):
         return True
 
     # Log Methods
-    def CreateLogEntryText(self, Result):
-        ResultText = Result["Log Prefix"]
-        ResultText += str(Result["Dice Number"]) + "d" + str(Result["Die Type"]) + ("+" if Result["Modifier"] >= 0 else "") + str(Result["Modifier"]) + " ->\n"
-        ResultText += str(Result["Rolls"]) + ("+" if Result["Modifier"] >= 0 else "") + str(Result["Modifier"]) + " ->\n"
-        ResultText += str(Result["Total"])
-        ResultText += Result["Log Suffix"]
+    def CreateLogEntryText(self, Results):
+        ResultText = Results["Log Prefix"]
+        ResultText += str(Results["Dice Number"]) + "d" + str(Results["Die Type"]) + ("+" if Results["Modifier"] >= 0 else "") + str(Results["Modifier"]) + " ->\n"
+        ResultText += str(Results["Rolls"]) + ("+" if Results["Modifier"] >= 0 else "") + str(Results["Modifier"]) + " ->\n"
+        ResultText += str(Results["Total"])
+        ResultText += Results["Log Suffix"]
         return ResultText
 
     def CreateLogText(self):
         LogText = ""
-        for ResultsIndex in reversed(self.ResultsLog):
-            LogText += self.CreateLogEntryText(ResultsIndex)
-            if not ResultsIndex is self.ResultsLog[0]:
+        for Results in reversed(self.ResultsLog):
+            LogText += Results
+            if not Results is self.ResultsLog[0]:
                 LogText += "\n\n---\n\n"
         return LogText
 
