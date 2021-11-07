@@ -709,4 +709,4 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         Theme, OK = QInputDialog.getItem(self, "Set Theme", "Set theme (requires restart to take effect):", Themes, current=CurrentThemeIndex, editable=False)
         if OK:
             self.Theme = Theme
-            self.DisplayMessageBox("The new theme will be active after SerpentNotes is restarted.")
+            self.DisplayMessageBox("The new theme will be active after SnakeEyes is restarted.")
