@@ -408,6 +408,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
             EditPresetRollDialogInst = EditPresetRollDialog(self, CurrentPresetRollIndex)
             if EditPresetRollDialogInst.UnsavedChanges:
                 self.UpdateUnsavedChangesFlag(True)
+                self.PresetRollsTreeWidget.SelectIndex(CurrentPresetRollIndex)
 
     def CopyPresetRoll(self):
         CurrentSelection = self.PresetRollsTreeWidget.selectedItems()
