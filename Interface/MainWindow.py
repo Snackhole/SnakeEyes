@@ -50,9 +50,9 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.UpdateWindowTitle()
 
         # Styles
-        self.LabelStyle = "QLabel {font-size: 20pt;}"
-        self.SpinBoxStyle = "QSpinBox {font-size: 20pt;}"
-        self.RollButtonStyle = "QPushButton {font-size: 20pt;}"
+        self.LabelStyle = "QLabel {font-size: 10pt;}"
+        self.SpinBoxStyle = "QSpinBox {font-size: 16pt;}"
+        self.RollButtonStyle = "QPushButton {font-size: 16pt;}"
 
         # Inputs Size Policy
         self.InputsSizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
@@ -155,7 +155,6 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         # Dice Roller Inputs in Layout
         self.DiceRollerInputsFrame = QFrame()
-        self.DiceRollerInputsFrame.setFrameStyle(QFrame.Panel | QFrame.Plain)
         self.DiceRollerInputsLayout = QGridLayout()
         self.DiceRollerInputsLayout.addWidget(self.DiceNumberSpinBox, 0, 0)
         self.DiceRollerInputsLayout.addWidget(self.DieTypeLabel, 0, 1)
@@ -168,7 +167,6 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         # Preset Rolls in Layout
         self.PresetRollsFrame = QFrame()
-        self.PresetRollsFrame.setFrameStyle(QFrame.Panel | QFrame.Plain)
         self.PresetRollsLayout = QGridLayout()
         self.PresetRollsLayout.addWidget(self.PresetRollsLabel, 0, 0, 1, 2)
         self.PresetRollsLayout.addWidget(self.PresetRollsTreeWidget, 1, 0, 7, 1)
@@ -186,7 +184,6 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         # Results Log Widgets in Layout
         self.ResultsLogFrame = QFrame()
-        self.ResultsLogFrame.setFrameStyle(QFrame.Panel | QFrame.Plain)
         self.ResultsLogLayout = QGridLayout()
         self.ResultsLogLayout.addWidget(self.ResultsLogLabel, 0, 0)
         self.ResultsLogLayout.addWidget(self.ResultsLogTextEdit, 1, 0)
