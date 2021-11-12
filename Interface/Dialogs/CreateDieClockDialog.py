@@ -74,7 +74,7 @@ class CreateDieClockDialog(QDialog):
         self.exec_()
 
     def Done(self):
-        if self.ValidEntry():
+        if self.ValidInput(Alert=True):
             self.Submitted = True
             self.Name = self.NameLineEdit.text()
             self.DieType = self.DieTypeSpinBox.value()
@@ -84,12 +84,14 @@ class CreateDieClockDialog(QDialog):
     def Cancel(self):
         self.close()
 
-    def ValidEntry(self):
+    def ValidInput(self, Alert=False):
         if self.NameLineEdit.text() == "":
-            self.MainWindow.DisplayMessageBox("Die clocks must have a name.", Icon=QMessageBox.Warning, Parent=self)
+            if Alert:
+                self.MainWindow.DisplayMessageBox("Die clocks must have a name.", Icon=QMessageBox.Warning, Parent=self)
             return False
         ComplicationThreshold = self.ComplicationThresholdSpinBox.value()
         if ComplicationThreshold < 1 or ComplicationThreshold >= self.DieTypeSpinBox.value():
-            self.MainWindow.DisplayMessageBox("Complication threshold must be greater than 0 and lesser than the die type.", Icon=QMessageBox.Warning, Parent=self)
+            if Alert:
+                self.MainWindow.DisplayMessageBox("Complication threshold must be greater than 0 and lesser than the die type.", Icon=QMessageBox.Warning, Parent=self)
             return False
         return True

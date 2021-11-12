@@ -76,13 +76,15 @@ class EditResultMessageDialog(QDialog):
         self.exec_()
 
     def UpdateResultMessage(self):
+        if not self.ValidInput():
+            return
         self.ResultMessage["Result Min"] = self.ResultMinSpinBox.value()
         self.ResultMessage["Result Max"] = self.ResultMaxSpinBox.value()
         self.ResultMessage["Result Text"] = self.ResultTextLineEdit.text()
         self.UnsavedChanges = True
 
     def Done(self):
-        if self.ValidInput():
+        if self.ValidInput(Alert=True):
             self.close()
 
     def Cancel(self):
@@ -91,11 +93,13 @@ class EditResultMessageDialog(QDialog):
         self.Cancelled = True
         self.close()
 
-    def ValidInput(self):
+    def ValidInput(self, Alert=False):
         if self.ResultTextLineEdit.text() == "":
-            self.EditPresetRollDialog.MainWindow.DisplayMessageBox("Result message text cannot be blank.", Icon=QMessageBox.Warning, Parent=self)
+            if Alert:
+                self.EditPresetRollDialog.MainWindow.DisplayMessageBox("Result message text cannot be blank.", Icon=QMessageBox.Warning, Parent=self)
             return False
         if self.ResultMinSpinBox.value() > self.ResultMaxSpinBox.value():
-            self.EditPresetRollDialog.MainWindow.DisplayMessageBox("Result minimum cannot be greater than result maximum.", Icon=QMessageBox.Warning, Parent=self)
+            if Alert:
+                self.EditPresetRollDialog.MainWindow.DisplayMessageBox("Result minimum cannot be greater than result maximum.", Icon=QMessageBox.Warning, Parent=self)
             return False
         return True
