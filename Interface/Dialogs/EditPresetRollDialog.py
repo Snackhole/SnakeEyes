@@ -214,7 +214,7 @@ class EditPresetRollDialog(QDialog):
             self.close()
 
     def Cancel(self):
-        self.MainWindow.DiceRoller.PresetRolls[self.PresetRollIndex] = self.PresetRollOriginalState
+        self.PresetRoll.update(self.PresetRollOriginalState)
         self.UnsavedChanges = False
         self.Cancelled = True
         self.close()

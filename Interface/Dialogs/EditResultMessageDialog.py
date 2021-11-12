@@ -86,7 +86,7 @@ class EditResultMessageDialog(QDialog):
             self.close()
 
     def Cancel(self):
-        self.EditPresetRollDialog.PresetRoll["Result Messages"][self.ResultMessageIndex] = self.ResultMessageOriginalState
+        self.ResultMessage.update(self.ResultMessageOriginalState)
         self.UnsavedChanges = False
         self.Cancelled = True
         self.close()
