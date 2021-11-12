@@ -50,7 +50,8 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.UpdateWindowTitle()
 
         # Styles
-        self.LabelStyle = "QLabel {font-size: 10pt;}"
+        self.RollLabelStyle = "QLabel {font-size: 16pt;}"
+        self.SectionLabelStyle = "QLabel {font-size: 10pt;}"
         self.SpinBoxStyle = "QSpinBox {font-size: 16pt;}"
         self.RollButtonStyle = "QPushButton {font-size: 16pt;}"
 
@@ -71,7 +72,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         # Die Type Label
         self.DieTypeLabel = QLabel("d")
-        self.DieTypeLabel.setStyleSheet(self.LabelStyle)
+        self.DieTypeLabel.setStyleSheet(self.RollLabelStyle)
         self.DieTypeLabel.setAlignment(QtCore.Qt.AlignCenter)
 
         # Die Type Spin Box
@@ -85,7 +86,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         # Modifier Label
         self.ModifierLabel = QLabel("+")
-        self.ModifierLabel.setStyleSheet(self.LabelStyle)
+        self.ModifierLabel.setStyleSheet(self.RollLabelStyle)
         self.ModifierLabel.setAlignment(QtCore.Qt.AlignCenter)
 
         # Modifier Spin Box
@@ -105,7 +106,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         # Preset Rolls Label
         self.PresetRollsLabel = QLabel("Preset Rolls")
-        self.PresetRollsLabel.setStyleSheet(self.LabelStyle)
+        self.PresetRollsLabel.setStyleSheet(self.SectionLabelStyle)
         self.PresetRollsLabel.setAlignment(QtCore.Qt.AlignCenter)
 
         # Preset Rolls Tree Widget
@@ -143,7 +144,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         # Results Log Label
         self.ResultsLogLabel = QLabel("Results Log")
-        self.ResultsLogLabel.setStyleSheet(self.LabelStyle)
+        self.ResultsLogLabel.setStyleSheet(self.SectionLabelStyle)
         self.ResultsLogLabel.setAlignment(QtCore.Qt.AlignCenter)
 
         # Results Log Text Edit
