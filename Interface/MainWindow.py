@@ -51,7 +51,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         # Styles
         self.RollLabelStyle = "QLabel {font-size: 16pt;}"
-        self.SectionLabelStyle = "QLabel {font-size: 10pt;}"
+        self.SectionLabelStyle = "QLabel {font-size: 10pt; font-weight: bold}"
         self.SpinBoxStyle = "QSpinBox {font-size: 16pt;}"
         self.RollButtonStyle = "QPushButton {font-size: 16pt;}"
 
