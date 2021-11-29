@@ -4,12 +4,13 @@ import os
 
 from PyQt5 import QtCore
 from PyQt5.QtGui import QIcon, QPalette, QColor
-from PyQt5.QtWidgets import QMainWindow, QApplication, QSizePolicy, QGridLayout, QFrame, QLabel, QPushButton, QTextEdit, QSpinBox, QMessageBox, QAction, QInputDialog
+from PyQt5.QtWidgets import QMainWindow, QApplication, QSizePolicy, QGridLayout, QFrame, QLabel, QTextEdit, QSpinBox, QMessageBox, QAction, QInputDialog
 
 from Core.DiceRoller import DiceRoller
 from Interface.Dialogs.CreateDieClockDialog import CreateDieClockDialog
 from Interface.Dialogs.EditPresetRollDialog import EditPresetRollDialog
 from Interface.Widgets.DieTypeSpinBox import DieTypeSpinBox
+from Interface.Widgets.IconButtons import AddButton, CopyButton, DeleteButton, EditButton, MoveDownButton, MoveUpButton, RollButton
 from Interface.Widgets.PresetRollsTreeWidget import PresetRollsTreeWidget
 from SaveAndLoad.SaveAndOpenMixin import SaveAndOpenMixin
 
@@ -53,7 +54,6 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.RollLabelStyle = "QLabel {font-size: 16pt;}"
         self.SectionLabelStyle = "QLabel {font-size: 10pt; font-weight: bold}"
         self.SpinBoxStyle = "QSpinBox {font-size: 16pt;}"
-        self.RollButtonStyle = "QPushButton {font-size: 16pt;}"
 
         # Inputs Size Policy
         self.InputsSizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
@@ -99,10 +99,8 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.ModifierSpinBox.setRange(-1000000000, 1000000000)
 
         # Roll Button
-        self.RollButton = QPushButton("Roll")
-        self.RollButton.clicked.connect(lambda: self.RollAction.trigger())
+        self.RollButton = RollButton(lambda: self.RollAction.trigger(), "Roll")
         self.RollButton.setSizePolicy(self.InputsSizePolicy)
-        self.RollButton.setStyleSheet(self.RollButtonStyle)
 
         # Preset Rolls Label
         self.PresetRollsLabel = QLabel("Preset Rolls")
@@ -114,32 +112,25 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.PresetRollsTreeWidget.itemActivated.connect(lambda: self.RollPresetRollAction.trigger())
 
         # Preset Rolls Buttons
-        self.PresetRollsRollButton = QPushButton("Roll")
-        self.PresetRollsRollButton.clicked.connect(lambda: self.RollPresetRollAction.trigger())
+        self.PresetRollsRollButton = RollButton(lambda: self.RollPresetRollAction.trigger(), "Roll Preset Roll")
         self.PresetRollsRollButton.setSizePolicy(self.InputsSizePolicy)
 
-        self.PresetRollsAddButton = QPushButton("+")
-        self.PresetRollsAddButton.clicked.connect(self.AddPresetRoll)
+        self.PresetRollsAddButton = AddButton(self.AddPresetRoll, "Add Preset Roll")
         self.PresetRollsAddButton.setSizePolicy(self.InputsSizePolicy)
 
-        self.PresetRollsDeleteButton = QPushButton("-")
-        self.PresetRollsDeleteButton.clicked.connect(self.DeletePresetRoll)
+        self.PresetRollsDeleteButton = DeleteButton(self.DeletePresetRoll, "Delete Preset Roll")
         self.PresetRollsDeleteButton.setSizePolicy(self.InputsSizePolicy)
 
-        self.PresetRollsEditButton = QPushButton("Edit")
-        self.PresetRollsEditButton.clicked.connect(self.EditPresetRoll)
+        self.PresetRollsEditButton = EditButton(self.EditPresetRoll, "Edit Preset Roll")
         self.PresetRollsEditButton.setSizePolicy(self.InputsSizePolicy)
 
-        self.PresetRollsCopyButton = QPushButton("Copy")
-        self.PresetRollsCopyButton.clicked.connect(self.CopyPresetRoll)
+        self.PresetRollsCopyButton = CopyButton(self.CopyPresetRoll, "Copy Preset Roll")
         self.PresetRollsCopyButton.setSizePolicy(self.InputsSizePolicy)
 
-        self.PresetRollsMoveUpButton = QPushButton("\u2191")
-        self.PresetRollsMoveUpButton.clicked.connect(self.MovePresetRollUp)
+        self.PresetRollsMoveUpButton = MoveUpButton(self.MovePresetRollUp, "Move Preset Roll Up")
         self.PresetRollsMoveUpButton.setSizePolicy(self.InputsSizePolicy)
 
-        self.PresetRollsMoveDownButton = QPushButton("\u2193")
-        self.PresetRollsMoveDownButton.clicked.connect(self.MovePresetRollDown)
+        self.PresetRollsMoveDownButton = MoveDownButton(self.MovePresetRollDown, "Move Preset Roll Down")
         self.PresetRollsMoveDownButton.setSizePolicy(self.InputsSizePolicy)
 
         # Results Log Label
@@ -155,7 +146,6 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.Layout = QGridLayout()
 
         # Dice Roller Inputs in Layout
-        self.DiceRollerInputsFrame = QFrame()
         self.DiceRollerInputsLayout = QGridLayout()
         self.DiceRollerInputsLayout.addWidget(self.DiceNumberSpinBox, 0, 0)
         self.DiceRollerInputsLayout.addWidget(self.DieTypeLabel, 0, 1)
@@ -163,33 +153,27 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.DiceRollerInputsLayout.addWidget(self.ModifierLabel, 0, 3)
         self.DiceRollerInputsLayout.addWidget(self.ModifierSpinBox, 0, 4)
         self.DiceRollerInputsLayout.addWidget(self.RollButton, 0, 5)
-        self.DiceRollerInputsFrame.setLayout(self.DiceRollerInputsLayout)
-        self.Layout.addWidget(self.DiceRollerInputsFrame, 0, 0)
+        self.Layout.addLayout(self.DiceRollerInputsLayout, 0, 0)
 
         # Preset Rolls in Layout
-        self.PresetRollsFrame = QFrame()
         self.PresetRollsLayout = QGridLayout()
-        self.PresetRollsLayout.addWidget(self.PresetRollsLabel, 0, 0, 1, 2)
-        self.PresetRollsLayout.addWidget(self.PresetRollsTreeWidget, 1, 0, 7, 1)
-        self.PresetRollsLayout.addWidget(self.PresetRollsRollButton, 1, 1)
-        self.PresetRollsLayout.addWidget(self.PresetRollsAddButton, 2, 1)
-        self.PresetRollsLayout.addWidget(self.PresetRollsDeleteButton, 3, 1)
-        self.PresetRollsLayout.addWidget(self.PresetRollsEditButton, 4, 1)
-        self.PresetRollsLayout.addWidget(self.PresetRollsCopyButton, 5, 1)
-        self.PresetRollsLayout.addWidget(self.PresetRollsMoveUpButton, 6, 1)
-        self.PresetRollsLayout.addWidget(self.PresetRollsMoveDownButton, 7, 1)
-        for Row in range(1, 8):
-            self.PresetRollsLayout.setRowStretch(Row, 1)
-        self.PresetRollsFrame.setLayout(self.PresetRollsLayout)
-        self.Layout.addWidget(self.PresetRollsFrame, 1, 0)
+        self.PresetRollsLayout.addWidget(self.PresetRollsLabel, 0, 0, 1, 7)
+        self.PresetRollsLayout.addWidget(self.PresetRollsRollButton, 1, 0)
+        self.PresetRollsLayout.addWidget(self.PresetRollsAddButton, 1, 1)
+        self.PresetRollsLayout.addWidget(self.PresetRollsDeleteButton, 1, 2)
+        self.PresetRollsLayout.addWidget(self.PresetRollsEditButton, 1, 3)
+        self.PresetRollsLayout.addWidget(self.PresetRollsCopyButton, 1, 4)
+        self.PresetRollsLayout.addWidget(self.PresetRollsMoveUpButton, 1, 5)
+        self.PresetRollsLayout.addWidget(self.PresetRollsMoveDownButton, 1, 6)
+        self.PresetRollsLayout.addWidget(self.PresetRollsTreeWidget, 2, 0, 1, 7)
+        self.PresetRollsLayout.setRowStretch(2, 1)
+        self.Layout.addLayout(self.PresetRollsLayout, 1, 0)
 
         # Results Log Widgets in Layout
-        self.ResultsLogFrame = QFrame()
         self.ResultsLogLayout = QGridLayout()
         self.ResultsLogLayout.addWidget(self.ResultsLogLabel, 0, 0)
         self.ResultsLogLayout.addWidget(self.ResultsLogTextEdit, 1, 0)
-        self.ResultsLogFrame.setLayout(self.ResultsLogLayout)
-        self.Layout.addWidget(self.ResultsLogFrame, 0, 1, 2, 1)
+        self.Layout.addLayout(self.ResultsLogLayout, 0, 1, 2, 1)
 
         # Set and Configure Layout
         self.Layout.setColumnStretch(1, 1)
