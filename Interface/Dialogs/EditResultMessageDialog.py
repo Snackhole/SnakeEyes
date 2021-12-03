@@ -1,7 +1,7 @@
 import copy
 
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QDialog, QLabel, QMessageBox, QSpinBox, QLineEdit, QPushButton, QGridLayout
+from PyQt5.QtWidgets import QDialog, QLabel, QMessageBox, QSpinBox, QLineEdit, QPushButton, QGridLayout, QSizePolicy
 
 
 class EditResultMessageDialog(QDialog):
@@ -18,6 +18,9 @@ class EditResultMessageDialog(QDialog):
         self.UnsavedChanges = False
         self.Cancelled = False
 
+        # Inputs Size Policy
+        self.InputsSizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+
         # Labels
         self.PromptLabel = QLabel("Add this result message:" if AddMode else "Edit this result message:")
         self.PromptLabel.setAlignment(QtCore.Qt.AlignCenter)
@@ -27,6 +30,7 @@ class EditResultMessageDialog(QDialog):
 
         # Inputs
         self.ResultMinSpinBox = QSpinBox()
+        self.ResultMinSpinBox.setSizePolicy(self.InputsSizePolicy)
         self.ResultMinSpinBox.setAlignment(QtCore.Qt.AlignCenter)
         self.ResultMinSpinBox.setButtonSymbols(self.ResultMinSpinBox.NoButtons)
         self.ResultMinSpinBox.setRange(-1000000000, 1000000000)
@@ -34,6 +38,7 @@ class EditResultMessageDialog(QDialog):
         self.ResultMinSpinBox.valueChanged.connect(self.UpdateResultMessage)
 
         self.ResultMaxSpinBox = QSpinBox()
+        self.ResultMaxSpinBox.setSizePolicy(self.InputsSizePolicy)
         self.ResultMaxSpinBox.setAlignment(QtCore.Qt.AlignCenter)
         self.ResultMaxSpinBox.setButtonSymbols(self.ResultMaxSpinBox.NoButtons)
         self.ResultMaxSpinBox.setRange(-1000000000, 1000000000)
@@ -41,6 +46,7 @@ class EditResultMessageDialog(QDialog):
         self.ResultMaxSpinBox.valueChanged.connect(self.UpdateResultMessage)
 
         self.ResultTextLineEdit = QLineEdit()
+        self.ResultTextLineEdit.setSizePolicy(self.InputsSizePolicy)
         self.ResultTextLineEdit.setText(self.ResultMessage["Result Text"])
         self.ResultTextLineEdit.textChanged.connect(self.UpdateResultMessage)
 
@@ -63,6 +69,9 @@ class EditResultMessageDialog(QDialog):
         self.ButtonsLayout.addWidget(self.DoneButton, 0, 0)
         self.ButtonsLayout.addWidget(self.CancelButton, 0, 1)
         self.Layout.addLayout(self.ButtonsLayout, 4, 0, 1, 2)
+        for Row in [1, 2, 3]:
+            self.Layout.setRowStretch(Row, 1)
+        self.Layout.setColumnStretch(1, 1)
         self.setLayout(self.Layout)
 
         # Set Window Title and Icon
