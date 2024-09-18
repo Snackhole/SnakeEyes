@@ -56,7 +56,7 @@ class DiceRoller(SerializableMixin):
             # Log Suffix
             for ResultMessage in ResultMessages:
                 if Results["Total"] >= ResultMessage["Result Min"] and Results["Total"] <= ResultMessage["Result Max"]:
-                    Results["Log Suffix"] += "\n" + ResultMessage["Result Text"]
+                    Results["Log Suffix"] += f"\n{ResultMessage["Result Text"]}"
 
             # Add to Log
             self.ResultsLog.append(self.CreateLogEntryText(Results))
@@ -65,7 +65,7 @@ class DiceRoller(SerializableMixin):
 
     def RollPresetRoll(self, PresetRollIndex):
         PresetRoll = self.PresetRolls[PresetRollIndex]
-        Results = self.RollDice(PresetRoll["Dice Number"], PresetRoll["Die Type"], PresetRoll["Modifier"], PresetRoll["Result Messages"], LogPrefix=PresetRoll["Name"] + ":\n")
+        Results = self.RollDice(PresetRoll["Dice Number"], PresetRoll["Die Type"], PresetRoll["Modifier"], PresetRoll["Result Messages"], LogPrefix=f"{PresetRoll["Name"]}:\n")
         return Results
 
     def AverageRoll(self, DiceNumber=1, DieType=6, Modifier=0, NumberRolls=100000):
@@ -111,31 +111,31 @@ class DiceRoller(SerializableMixin):
         DieClockPresetRolls = []
         for ClockValue in range(DieType + 1):
             CurrentClockValuePresetRoll = self.CreatePresetRoll()
-            CurrentClockValuePresetRoll["Name"] = Name + "; Current Value:  " + str(ClockValue) + (" (Complication Threshold)" if ClockValue == ComplicationThreshold else "") + (" (Beyond Complication Threshold)" if ClockValue > ComplicationThreshold else "")
+            CurrentClockValuePresetRoll["Name"] = f"{Name}; Current Value:  {str(ClockValue)}{" (Complication Threshold)" if ClockValue == ComplicationThreshold else ""}{" (Beyond Complication Threshold)" if ClockValue > ComplicationThreshold else ""}"
             CurrentClockValuePresetRoll["Die Type"] = DieType
             DieClockPresetRolls.append(CurrentClockValuePresetRoll)
             if ClockValue < ComplicationThreshold:
                 BelowThresholdResultMessage = self.CreateResultMessage()
                 BelowThresholdResultMessage["Result Min"] = 1
                 BelowThresholdResultMessage["Result Max"] = DieType
-                BelowThresholdResultMessage["Result Text"] = Name + " does not go off; current value below complication threshold."
+                BelowThresholdResultMessage["Result Text"] = f"{Name} does not go off; current value below complication threshold."
                 CurrentClockValuePresetRoll["Result Messages"].append(BelowThresholdResultMessage)
             elif ClockValue >= ComplicationThreshold and ClockValue != DieType:
                 AboveThresholdLowerRollResultMessage = self.CreateResultMessage()
                 AboveThresholdLowerRollResultMessage["Result Min"] = 1
                 AboveThresholdLowerRollResultMessage["Result Max"] = ClockValue - 1
-                AboveThresholdLowerRollResultMessage["Result Text"] = "Current clock value exceeds roll result; " + Name + " goes off!"
+                AboveThresholdLowerRollResultMessage["Result Text"] = f"Current clock value exceeds roll result; {Name} goes off!"
                 AboveThresholdHigherRollResultMessage = self.CreateResultMessage()
                 AboveThresholdHigherRollResultMessage["Result Min"] = ClockValue
                 AboveThresholdHigherRollResultMessage["Result Max"] = DieType
-                AboveThresholdHigherRollResultMessage["Result Text"] = "Roll result equals or exceeds current clock value; " + Name + " does not go off."
+                AboveThresholdHigherRollResultMessage["Result Text"] = f"Roll result equals or exceeds current clock value; {Name} does not go off."
                 CurrentClockValuePresetRoll["Result Messages"].append(AboveThresholdLowerRollResultMessage)
                 CurrentClockValuePresetRoll["Result Messages"].append(AboveThresholdHigherRollResultMessage)
             else:
                 MaximumClockValueResultMessage = self.CreateResultMessage()
                 MaximumClockValueResultMessage["Result Min"] = 1
                 MaximumClockValueResultMessage["Result Max"] = DieType
-                MaximumClockValueResultMessage["Result Text"] = Name + " at maximum value; " + Name + " goes off!"
+                MaximumClockValueResultMessage["Result Text"] = f"{Name} at maximum value; {Name} goes off!"
                 CurrentClockValuePresetRoll["Result Messages"].append(MaximumClockValueResultMessage)
         self.PresetRolls = self.PresetRolls + DieClockPresetRolls
 
@@ -179,8 +179,8 @@ class DiceRoller(SerializableMixin):
     # Log Methods
     def CreateLogEntryText(self, Results):
         ResultText = Results["Log Prefix"]
-        ResultText += str(Results["Dice Number"]) + "d" + str(Results["Die Type"]) + ("+" if Results["Modifier"] >= 0 else "") + str(Results["Modifier"]) + " ->\n"
-        ResultText += str(Results["Rolls"]) + ("+" if Results["Modifier"] >= 0 else "") + str(Results["Modifier"]) + " ->\n"
+        ResultText += f"{str(Results["Dice Number"])}d{str(Results["Die Type"])}{"+" if Results["Modifier"] >= 0 else ""}{str(Results["Modifier"])} ->\n"
+        ResultText += f"{str(Results["Rolls"])}{"+" if Results["Modifier"] >= 0 else ""}{str(Results["Modifier"])} ->\n"
         ResultText += str(Results["Total"])
         ResultText += Results["Log Suffix"]
         return ResultText

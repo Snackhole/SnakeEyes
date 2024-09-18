@@ -37,9 +37,9 @@ class ResultMessagesWidgetItem(QTreeWidgetItem):
         # Determine Item Text
         ItemText = ""
         if ResultMessage["Result Min"] == ResultMessage["Result Max"]:
-            ItemText += str(ResultMessage["Result Min"]) + ":  "
+            ItemText += f"{str(ResultMessage["Result Min"])}:  "
         else:
-            ItemText += str(ResultMessage["Result Min"]) + "-" + str(ResultMessage["Result Max"]) + ":  "
+            ItemText += f"{str(ResultMessage["Result Min"])}-{str(ResultMessage["Result Max"])}:  "
         ItemText += ResultMessage["Result Text"]
 
         # Set Text

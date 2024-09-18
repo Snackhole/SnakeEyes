@@ -35,7 +35,7 @@ class PresetRollsWidgetItem(QTreeWidgetItem):
         self.PresetRoll = PresetRoll
 
         # Variables
-        self.Text = self.PresetRoll["Name"] + " (" + str(self.PresetRoll["Dice Number"]) + "d" + str(self.PresetRoll["Die Type"]) + ("" if self.PresetRoll["Modifier"] < 0 else "+") + str(self.PresetRoll["Modifier"]) + ")"
+        self.Text = f"{self.PresetRoll["Name"]} ({str(self.PresetRoll["Dice Number"])}d{str(self.PresetRoll["Die Type"])}{"+" if self.PresetRoll["Modifier"] >= 0 else ""}{str(self.PresetRoll["Modifier"])})"
 
         # Set Text
         self.setText(0, self.Text)

@@ -284,7 +284,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.DefaultKeybindings["AverageRollAction"] = "Ctrl+Alt+R"
 
     def GetResourcePath(self, RelativeLocation):
-        return self.AbsoluteDirectoryPath + "/" + RelativeLocation
+        return os.path.join(self.AbsoluteDirectoryPath, RelativeLocation)
 
     def LoadConfigs(self):
         # Default Roll
@@ -356,7 +356,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         DieType = self.DieTypeSpinBox.value()
         Modifier = self.ModifierSpinBox.value()
         AverageResult = self.DiceRoller.AverageRoll(DiceNumber, DieType, Modifier)
-        AverageResultText = "The average result of " + str(DiceNumber) + "d" + str(DieType) + ("+" if Modifier >= 0 else "") + str(Modifier) + " is:\n\n" + str(AverageResult)
+        AverageResultText = f"The average result of {str(DiceNumber)}d{str(DieType)}{"+" if Modifier >= 0 else ""}{str(Modifier)} is:\n\n{str(AverageResult)}"
         self.DisplayMessageBox(AverageResultText)
 
     def AddPresetRoll(self):
@@ -521,9 +521,9 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.UpdateWindowTitle()
 
     def UpdateWindowTitle(self):
-        CurrentFileTitleSection = " [" + os.path.basename(self.CurrentOpenFileName) + "]" if self.CurrentOpenFileName != "" else ""
+        CurrentFileTitleSection = f" [{os.path.basename(self.CurrentOpenFileName)}]" if self.CurrentOpenFileName != "" else ""
         UnsavedChangesIndicator = " *" if self.UnsavedChanges else ""
-        self.setWindowTitle(self.ScriptName + CurrentFileTitleSection + UnsavedChangesIndicator)
+        self.setWindowTitle(f"{self.ScriptName}{CurrentFileTitleSection}{UnsavedChangesIndicator}")
 
     def DisplayMessageBox(self, Message, Icon=QMessageBox.Information, Buttons=QMessageBox.Ok, Parent=None):
         MessageBox = QMessageBox(self if Parent is None else Parent)
