@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QHeaderView
+from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem, QHeaderView
 
 
 class ResultMessagesTreeWidget(QTreeWidget):
@@ -12,7 +12,7 @@ class ResultMessagesTreeWidget(QTreeWidget):
         self.setHeaderHidden(True)
         self.setRootIsDecorated(False)
         self.header().setStretchLastSection(False)
-        self.header().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.header().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
 
     def FillFromResultMessages(self):
         self.clear()
@@ -22,7 +22,7 @@ class ResultMessagesTreeWidget(QTreeWidget):
     def SelectIndex(self, Index):
         DestinationIndex = self.model().index(Index, 0)
         self.setCurrentIndex(DestinationIndex)
-        self.scrollToItem(self.currentItem(), self.PositionAtCenter)
+        self.scrollToItem(self.currentItem(), self.ScrollHint.PositionAtCenter)
         self.horizontalScrollBar().setValue(0)
 
 

@@ -1,7 +1,7 @@
 import copy
 
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QGridLayout, QPushButton, QSpinBox, QSizePolicy, QMessageBox
+from PyQt6 import QtCore
+from PyQt6.QtWidgets import QDialog, QLabel, QLineEdit, QGridLayout, QPushButton, QSpinBox, QSizePolicy, QMessageBox
 
 from Interface.Dialogs.EditResultMessageDialog import EditResultMessageDialog
 from Interface.Widgets.DieTypeSpinBox import DieTypeSpinBox
@@ -24,16 +24,16 @@ class EditPresetRollDialog(QDialog):
         self.Cancelled = False
 
         # Inputs Size Policy
-        self.InputsSizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.InputsSizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         # Labels
         self.PromptLabel = QLabel("Add this preset roll:" if AddMode else "Edit this preset roll:")
-        self.PromptLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.PromptLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.NameLabel = QLabel("Name:")
         self.DieTypeLabel = QLabel("d")
         self.ModifierLabel = QLabel("+")
         self.ResultMessagesLabel = QLabel("Result Messages:")
-        self.ResultMessagesLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.ResultMessagesLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
         # Roll Inputs
         self.NameLineEdit = QLineEdit()
@@ -41,22 +41,22 @@ class EditPresetRollDialog(QDialog):
         self.NameLineEdit.textChanged.connect(self.UpdatePresetRoll)
 
         self.DiceNumberSpinBox = QSpinBox()
-        self.DiceNumberSpinBox.setAlignment(QtCore.Qt.AlignCenter)
-        self.DiceNumberSpinBox.setButtonSymbols(self.DiceNumberSpinBox.NoButtons)
+        self.DiceNumberSpinBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.DiceNumberSpinBox.setButtonSymbols(self.DiceNumberSpinBox.ButtonSymbols.NoButtons)
         self.DiceNumberSpinBox.setRange(1, 1000000000)
         self.DiceNumberSpinBox.setValue(self.PresetRoll["Dice Number"])
         self.DiceNumberSpinBox.valueChanged.connect(self.UpdatePresetRoll)
 
         self.DieTypeSpinBox = DieTypeSpinBox()
-        self.DieTypeSpinBox.setAlignment(QtCore.Qt.AlignCenter)
-        self.DieTypeSpinBox.setButtonSymbols(self.DieTypeSpinBox.NoButtons)
+        self.DieTypeSpinBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.DieTypeSpinBox.setButtonSymbols(self.DieTypeSpinBox.ButtonSymbols.NoButtons)
         self.DieTypeSpinBox.setRange(1, 1000000000)
         self.DieTypeSpinBox.setValue(self.PresetRoll["Die Type"])
         self.DieTypeSpinBox.valueChanged.connect(self.UpdatePresetRoll)
 
         self.ModifierSpinBox = QSpinBox()
-        self.ModifierSpinBox.setAlignment(QtCore.Qt.AlignCenter)
-        self.ModifierSpinBox.setButtonSymbols(self.ModifierSpinBox.NoButtons)
+        self.ModifierSpinBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.ModifierSpinBox.setButtonSymbols(self.ModifierSpinBox.ButtonSymbols.NoButtons)
         self.ModifierSpinBox.setRange(-1000000000, 1000000000)
         self.ModifierSpinBox.setValue(self.PresetRoll["Modifier"])
         self.ModifierSpinBox.valueChanged.connect(self.UpdatePresetRoll)
@@ -128,7 +128,7 @@ class EditPresetRollDialog(QDialog):
         self.NameLineEdit.selectAll()
 
         # Execute Dialog
-        self.exec_()
+        self.exec()
 
     def AddResultMessage(self):
         ResultMessageIndex = self.MainWindow.DiceRoller.AddResultMessage(self.PresetRollIndex)
@@ -145,7 +145,7 @@ class EditPresetRollDialog(QDialog):
     def DeleteResultMessage(self):
         CurrentSelection = self.ResultMessagesTreeWidget.selectedItems()
         if len(CurrentSelection) > 0:
-            if self.MainWindow.DisplayMessageBox("Are you sure you want to delete this result message?  This cannot be undone.", Icon=QMessageBox.Question, Buttons=(QMessageBox.Yes | QMessageBox.No)) == QMessageBox.Yes:
+            if self.MainWindow.DisplayMessageBox("Are you sure you want to delete this result message?  This cannot be undone.", Icon=QMessageBox.Icon.Question, Buttons=(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)) == QMessageBox.StandardButton.Yes:
                 CurrentResultMessage = CurrentSelection[0]
                 CurrentResultMessageIndex = CurrentResultMessage.Index
                 self.MainWindow.DiceRoller.DeleteResultMessage(self.PresetRollIndex, CurrentResultMessageIndex)
@@ -214,7 +214,7 @@ class EditPresetRollDialog(QDialog):
     def ValidInput(self, Alert=False):
         if self.NameLineEdit.text() == "":
             if Alert:
-                self.MainWindow.DisplayMessageBox("Preset rolls must have a name.", Icon=QMessageBox.Warning, Parent=self)
+                self.MainWindow.DisplayMessageBox("Preset rolls must have a name.", Icon=QMessageBox.Icon.Warning, Parent=self)
             return False
         return True
 

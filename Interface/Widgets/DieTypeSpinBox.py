@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QSpinBox
+from PyQt6.QtWidgets import QSpinBox
 
 
 class DieTypeSpinBox(QSpinBox):

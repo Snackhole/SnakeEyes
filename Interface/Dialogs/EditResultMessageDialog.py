@@ -1,7 +1,7 @@
 import copy
 
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QDialog, QLabel, QMessageBox, QSpinBox, QLineEdit, QPushButton, QGridLayout, QSizePolicy
+from PyQt6 import QtCore
+from PyQt6.QtWidgets import QDialog, QLabel, QMessageBox, QSpinBox, QLineEdit, QPushButton, QGridLayout, QSizePolicy
 
 
 class EditResultMessageDialog(QDialog):
@@ -19,11 +19,11 @@ class EditResultMessageDialog(QDialog):
         self.Cancelled = False
 
         # Inputs Size Policy
-        self.InputsSizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.InputsSizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         # Labels
         self.PromptLabel = QLabel("Add this result message:" if AddMode else "Edit this result message:")
-        self.PromptLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.PromptLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.ResultMinLabel = QLabel("Result Min:")
         self.ResultMaxLabel = QLabel("Result Max:")
         self.ResultTextLabel = QLabel("Result Text:")
@@ -31,16 +31,16 @@ class EditResultMessageDialog(QDialog):
         # Inputs
         self.ResultMinSpinBox = QSpinBox()
         self.ResultMinSpinBox.setSizePolicy(self.InputsSizePolicy)
-        self.ResultMinSpinBox.setAlignment(QtCore.Qt.AlignCenter)
-        self.ResultMinSpinBox.setButtonSymbols(self.ResultMinSpinBox.NoButtons)
+        self.ResultMinSpinBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.ResultMinSpinBox.setButtonSymbols(self.ResultMinSpinBox.ButtonSymbols.NoButtons)
         self.ResultMinSpinBox.setRange(-1000000000, 1000000000)
         self.ResultMinSpinBox.setValue(self.ResultMessage["Result Min"])
         self.ResultMinSpinBox.valueChanged.connect(self.UpdateResultMessage)
 
         self.ResultMaxSpinBox = QSpinBox()
         self.ResultMaxSpinBox.setSizePolicy(self.InputsSizePolicy)
-        self.ResultMaxSpinBox.setAlignment(QtCore.Qt.AlignCenter)
-        self.ResultMaxSpinBox.setButtonSymbols(self.ResultMaxSpinBox.NoButtons)
+        self.ResultMaxSpinBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.ResultMaxSpinBox.setButtonSymbols(self.ResultMaxSpinBox.ButtonSymbols.NoButtons)
         self.ResultMaxSpinBox.setRange(-1000000000, 1000000000)
         self.ResultMaxSpinBox.setValue(self.ResultMessage["Result Max"])
         self.ResultMaxSpinBox.valueChanged.connect(self.UpdateResultMessage)
@@ -82,7 +82,7 @@ class EditResultMessageDialog(QDialog):
         self.ResultMinSpinBox.selectAll()
 
         # Execute Dialog
-        self.exec_()
+        self.exec()
 
     def UpdateResultMessage(self):
         if not self.ValidInput():
@@ -105,10 +105,10 @@ class EditResultMessageDialog(QDialog):
     def ValidInput(self, Alert=False):
         if self.ResultTextLineEdit.text() == "":
             if Alert:
-                self.EditPresetRollDialog.MainWindow.DisplayMessageBox("Result message text cannot be blank.", Icon=QMessageBox.Warning, Parent=self)
+                self.EditPresetRollDialog.MainWindow.DisplayMessageBox("Result message text cannot be blank.", Icon=QMessageBox.Icon.Warning, Parent=self)
             return False
         if self.ResultMinSpinBox.value() > self.ResultMaxSpinBox.value():
             if Alert:
-                self.EditPresetRollDialog.MainWindow.DisplayMessageBox("Result minimum cannot be greater than result maximum.", Icon=QMessageBox.Warning, Parent=self)
+                self.EditPresetRollDialog.MainWindow.DisplayMessageBox("Result minimum cannot be greater than result maximum.", Icon=QMessageBox.Icon.Warning, Parent=self)
             return False
         return True

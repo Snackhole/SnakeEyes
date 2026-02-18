@@ -2,9 +2,9 @@ import copy
 import json
 import os
 
-from PyQt5 import QtCore
-from PyQt5.QtGui import QIcon, QPalette, QColor
-from PyQt5.QtWidgets import QMainWindow, QApplication, QSizePolicy, QGridLayout, QFrame, QLabel, QTextEdit, QSpinBox, QMessageBox, QAction, QInputDialog
+from PyQt6 import QtCore
+from PyQt6.QtGui import QIcon, QPalette, QColor, QAction
+from PyQt6.QtWidgets import QMainWindow, QApplication, QSizePolicy, QGridLayout, QFrame, QLabel, QTextEdit, QSpinBox, QMessageBox, QInputDialog
 
 from Core.DiceRoller import DiceRoller
 from Interface.Dialogs.CreateDieClockDialog import CreateDieClockDialog
@@ -56,46 +56,46 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.SpinBoxStyle = "QSpinBox {font-size: 16pt;}"
 
         # Inputs Size Policy
-        self.InputsSizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.InputsSizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         # Dice Roller Width
         self.DiceRollerWidth = 80
 
         # Dice Number Spin Box
         self.DiceNumberSpinBox = QSpinBox()
-        self.DiceNumberSpinBox.setAlignment(QtCore.Qt.AlignCenter)
+        self.DiceNumberSpinBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.DiceNumberSpinBox.setStyleSheet(self.SpinBoxStyle)
         self.DiceNumberSpinBox.setSizePolicy(self.InputsSizePolicy)
         self.DiceNumberSpinBox.setFixedWidth(self.DiceRollerWidth)
-        self.DiceNumberSpinBox.setButtonSymbols(self.DiceNumberSpinBox.NoButtons)
+        self.DiceNumberSpinBox.setButtonSymbols(self.DiceNumberSpinBox.ButtonSymbols.NoButtons)
         self.DiceNumberSpinBox.setRange(1, 1000000000)
 
         # Die Type Label
         self.DieTypeLabel = QLabel("d")
         self.DieTypeLabel.setStyleSheet(self.RollLabelStyle)
-        self.DieTypeLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.DieTypeLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
         # Die Type Spin Box
         self.DieTypeSpinBox = DieTypeSpinBox()
-        self.DieTypeSpinBox.setAlignment(QtCore.Qt.AlignCenter)
+        self.DieTypeSpinBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.DieTypeSpinBox.setStyleSheet(self.SpinBoxStyle)
         self.DieTypeSpinBox.setSizePolicy(self.InputsSizePolicy)
         self.DieTypeSpinBox.setFixedWidth(self.DiceRollerWidth)
-        self.DieTypeSpinBox.setButtonSymbols(self.DieTypeSpinBox.NoButtons)
+        self.DieTypeSpinBox.setButtonSymbols(self.DieTypeSpinBox.ButtonSymbols.NoButtons)
         self.DieTypeSpinBox.setRange(1, 1000000000)
 
         # Modifier Label
         self.ModifierLabel = QLabel("+")
         self.ModifierLabel.setStyleSheet(self.RollLabelStyle)
-        self.ModifierLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.ModifierLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
         # Modifier Spin Box
         self.ModifierSpinBox = QSpinBox()
-        self.ModifierSpinBox.setAlignment(QtCore.Qt.AlignCenter)
+        self.ModifierSpinBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.ModifierSpinBox.setStyleSheet(self.SpinBoxStyle)
         self.ModifierSpinBox.setSizePolicy(self.InputsSizePolicy)
         self.ModifierSpinBox.setFixedWidth(self.DiceRollerWidth)
-        self.ModifierSpinBox.setButtonSymbols(self.ModifierSpinBox.NoButtons)
+        self.ModifierSpinBox.setButtonSymbols(self.ModifierSpinBox.ButtonSymbols.NoButtons)
         self.ModifierSpinBox.setRange(-1000000000, 1000000000)
 
         # Roll Button
@@ -105,7 +105,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         # Preset Rolls Label
         self.PresetRollsLabel = QLabel("Preset Rolls")
         self.PresetRollsLabel.setStyleSheet(self.SectionLabelStyle)
-        self.PresetRollsLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.PresetRollsLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
         # Preset Rolls Tree Widget
         self.PresetRollsTreeWidget = PresetRollsTreeWidget(self)
@@ -136,7 +136,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         # Results Log Label
         self.ResultsLogLabel = QLabel("Results Log")
         self.ResultsLogLabel.setStyleSheet(self.SectionLabelStyle)
-        self.ResultsLogLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.ResultsLogLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
         # Results Log Text Edit
         self.ResultsLogTextEdit = QTextEdit()
@@ -373,7 +373,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
     def DeletePresetRoll(self):
         CurrentSelection = self.PresetRollsTreeWidget.selectedItems()
         if len(CurrentSelection) > 0:
-            if self.DisplayMessageBox("Are you sure you want to delete this preset roll?  This cannot be undone.", Icon=QMessageBox.Question, Buttons=(QMessageBox.Yes | QMessageBox.No)) == QMessageBox.Yes:
+            if self.DisplayMessageBox("Are you sure you want to delete this preset roll?  This cannot be undone.", Icon=QMessageBox.Icon.Question, Buttons=(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)) == QMessageBox.StandardButton.Yes:
                 CurrentPresetRoll = CurrentSelection[0]
                 CurrentPresetRollIndex = CurrentPresetRoll.Index
                 self.DiceRoller.DeletePresetRoll(CurrentPresetRollIndex)
@@ -464,13 +464,13 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
     def closeEvent(self, event):
         Close = True
         if self.UnsavedChanges:
-            SavePrompt = self.DisplayMessageBox("Save unsaved changes before closing?", Icon=QMessageBox.Warning, Buttons=(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel))
-            if SavePrompt == QMessageBox.Yes:
+            SavePrompt = self.DisplayMessageBox("Save unsaved changes before closing?", Icon=QMessageBox.Icon.Warning, Buttons=(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel))
+            if SavePrompt == QMessageBox.StandardButton.Yes:
                 if not self.Save(self.DiceRoller):
                     Close = False
-            elif SavePrompt == QMessageBox.No:
+            elif SavePrompt == QMessageBox.StandardButton.No:
                 pass
-            elif SavePrompt == QMessageBox.Cancel:
+            elif SavePrompt == QMessageBox.StandardButton.Cancel:
                 Close = False
         if not Close:
             event.ignore()
@@ -493,12 +493,12 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
             self.UpdateUnsavedChangesFlag(True)
 
     def RemoveLastLogEntry(self):
-        if self.DisplayMessageBox("Are you sure you want to remove the last log entry?  This cannot be undone.", Icon=QMessageBox.Question, Buttons=(QMessageBox.Yes | QMessageBox.No)) == QMessageBox.Yes:
+        if self.DisplayMessageBox("Are you sure you want to remove the last log entry?  This cannot be undone.", Icon=QMessageBox.Icon.Question, Buttons=(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)) == QMessageBox.StandardButton.Yes:
             self.DiceRoller.RemoveLastLogEntry()
             self.UpdateUnsavedChangesFlag(True)
 
     def ClearLog(self):
-        if self.DisplayMessageBox("Are you sure you want to clear the log?  This cannot be undone.", Icon=QMessageBox.Question, Buttons=(QMessageBox.Yes | QMessageBox.No)) == QMessageBox.Yes:
+        if self.DisplayMessageBox("Are you sure you want to clear the log?  This cannot be undone.", Icon=QMessageBox.Icon.Question, Buttons=(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)) == QMessageBox.StandardButton.Yes:
             self.DiceRoller.ClearLog()
             self.UpdateUnsavedChangesFlag(True)
 
@@ -525,14 +525,14 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         UnsavedChangesIndicator = " *" if self.UnsavedChanges else ""
         self.setWindowTitle(f"{self.ScriptName}{CurrentFileTitleSection}{UnsavedChangesIndicator}")
 
-    def DisplayMessageBox(self, Message, Icon=QMessageBox.Information, Buttons=QMessageBox.Ok, Parent=None):
+    def DisplayMessageBox(self, Message, Icon=QMessageBox.Icon.Information, Buttons=QMessageBox.StandardButton.Ok, Parent=None):
         MessageBox = QMessageBox(self if Parent is None else Parent)
         MessageBox.setWindowIcon(self.WindowIcon)
         MessageBox.setWindowTitle(self.ScriptName)
         MessageBox.setIcon(Icon)
         MessageBox.setText(Message)
         MessageBox.setStandardButtons(Buttons)
-        return MessageBox.exec_()
+        return MessageBox.exec()
 
     def FlashStatusBar(self, Status, Duration=2000):
         self.StatusBar.showMessage(Status)
@@ -550,129 +550,129 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         # Light
         self.Themes["Light"] = QPalette()
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.Window, QColor(240, 240, 240, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.WindowText, QColor(120, 120, 120, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.Base, QColor(240, 240, 240, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.AlternateBase, QColor(247, 247, 247, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.ToolTipBase, QColor(255, 255, 220, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.ToolTipText, QColor(0, 0, 0, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.PlaceholderText, QColor(0, 0, 0, 128))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.Text, QColor(120, 120, 120, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.Button, QColor(240, 240, 240, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.ButtonText, QColor(120, 120, 120, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.BrightText, QColor(255, 255, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.Light, QColor(255, 255, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.Midlight, QColor(247, 247, 247, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.Dark, QColor(160, 160, 160, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.Mid, QColor(160, 160, 160, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.Shadow, QColor(0, 0, 0, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.Highlight, QColor(0, 120, 215, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.HighlightedText, QColor(255, 255, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.Link, QColor(0, 0, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Disabled, QPalette.LinkVisited, QColor(255, 0, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.Window, QColor(240, 240, 240, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.WindowText, QColor(0, 0, 0, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.Base, QColor(255, 255, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.AlternateBase, QColor(233, 231, 227, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.ToolTipBase, QColor(255, 255, 220, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.ToolTipText, QColor(0, 0, 0, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.PlaceholderText, QColor(0, 0, 0, 128))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.Text, QColor(0, 0, 0, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.Button, QColor(240, 240, 240, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.ButtonText, QColor(0, 0, 0, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.BrightText, QColor(255, 255, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.Light, QColor(255, 255, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.Midlight, QColor(227, 227, 227, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.Dark, QColor(160, 160, 160, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.Mid, QColor(160, 160, 160, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.Shadow, QColor(105, 105, 105, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.Highlight, QColor(0, 120, 215, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.HighlightedText, QColor(255, 255, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.Link, QColor(0, 0, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Active, QPalette.LinkVisited, QColor(255, 0, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.Window, QColor(240, 240, 240, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.WindowText, QColor(0, 0, 0, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.Base, QColor(255, 255, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.AlternateBase, QColor(233, 231, 227, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.ToolTipBase, QColor(255, 255, 220, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.ToolTipText, QColor(0, 0, 0, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.PlaceholderText, QColor(0, 0, 0, 128))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.Text, QColor(0, 0, 0, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.Button, QColor(240, 240, 240, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.ButtonText, QColor(0, 0, 0, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.BrightText, QColor(255, 255, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.Light, QColor(255, 255, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.Midlight, QColor(227, 227, 227, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.Dark, QColor(160, 160, 160, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.Mid, QColor(160, 160, 160, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.Shadow, QColor(105, 105, 105, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.Highlight, QColor(240, 240, 240, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.HighlightedText, QColor(0, 0, 0, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.Link, QColor(0, 0, 255, 255))
-        self.Themes["Light"].setColor(QPalette.Inactive, QPalette.LinkVisited, QColor(255, 0, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Window, QColor(240, 240, 240, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.WindowText, QColor(120, 120, 120, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Base, QColor(240, 240, 240, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.AlternateBase, QColor(247, 247, 247, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ToolTipBase, QColor(255, 255, 220, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ToolTipText, QColor(0, 0, 0, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.PlaceholderText, QColor(0, 0, 0, 128))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text, QColor(120, 120, 120, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Button, QColor(240, 240, 240, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ButtonText, QColor(120, 120, 120, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.BrightText, QColor(255, 255, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Light, QColor(255, 255, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Midlight, QColor(247, 247, 247, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Dark, QColor(160, 160, 160, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Mid, QColor(160, 160, 160, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Shadow, QColor(0, 0, 0, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Highlight, QColor(0, 120, 215, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.HighlightedText, QColor(255, 255, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Link, QColor(0, 0, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.LinkVisited, QColor(255, 0, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Window, QColor(240, 240, 240, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.WindowText, QColor(0, 0, 0, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Base, QColor(255, 255, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.AlternateBase, QColor(233, 231, 227, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.ToolTipBase, QColor(255, 255, 220, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.ToolTipText, QColor(0, 0, 0, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.PlaceholderText, QColor(0, 0, 0, 128))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Text, QColor(0, 0, 0, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Button, QColor(240, 240, 240, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.ButtonText, QColor(0, 0, 0, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.BrightText, QColor(255, 255, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Light, QColor(255, 255, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Midlight, QColor(227, 227, 227, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Dark, QColor(160, 160, 160, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Mid, QColor(160, 160, 160, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Shadow, QColor(105, 105, 105, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Highlight, QColor(0, 120, 215, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.HighlightedText, QColor(255, 255, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Link, QColor(0, 0, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.LinkVisited, QColor(255, 0, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Window, QColor(240, 240, 240, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.WindowText, QColor(0, 0, 0, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Base, QColor(255, 255, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.AlternateBase, QColor(233, 231, 227, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.ToolTipBase, QColor(255, 255, 220, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.ToolTipText, QColor(0, 0, 0, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.PlaceholderText, QColor(0, 0, 0, 128))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Text, QColor(0, 0, 0, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Button, QColor(240, 240, 240, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.ButtonText, QColor(0, 0, 0, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.BrightText, QColor(255, 255, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Light, QColor(255, 255, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Midlight, QColor(227, 227, 227, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Dark, QColor(160, 160, 160, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Mid, QColor(160, 160, 160, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Shadow, QColor(105, 105, 105, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Highlight, QColor(240, 240, 240, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.HighlightedText, QColor(0, 0, 0, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Link, QColor(0, 0, 255, 255))
+        self.Themes["Light"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.LinkVisited, QColor(255, 0, 255, 255))
 
         # Dark
         self.Themes["Dark"] = QPalette()
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.Window, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.WindowText, QColor(98, 108, 118, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.Base, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.AlternateBase, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.ToolTipBase, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.ToolTipText, QColor(239, 240, 241, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.PlaceholderText, QColor(239, 240, 241, 128))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.Text, QColor(98, 108, 118, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.Button, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.ButtonText, QColor(98, 108, 118, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.BrightText, QColor(255, 255, 255, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.Light, QColor(24, 27, 29, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.Midlight, QColor(36, 40, 44, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.Dark, QColor(98, 108, 118, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.Mid, QColor(65, 72, 78, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.Shadow, QColor(0, 0, 0, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.Highlight, QColor(65, 72, 78, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.HighlightedText, QColor(36, 40, 44, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.Link, QColor(41, 128, 185, 255))
-        self.Themes["Dark"].setColor(QPalette.Disabled, QPalette.LinkVisited, QColor(127, 140, 141, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.Window, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.WindowText, QColor(239, 240, 241, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.Base, QColor(35, 38, 41, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.AlternateBase, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.ToolTipBase, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.ToolTipText, QColor(239, 240, 241, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.PlaceholderText, QColor(239, 240, 241, 128))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.Text, QColor(239, 240, 241, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.Button, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.ButtonText, QColor(239, 240, 241, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.BrightText, QColor(255, 255, 255, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.Light, QColor(24, 27, 29, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.Midlight, QColor(36, 40, 44, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.Dark, QColor(98, 108, 118, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.Mid, QColor(65, 72, 78, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.Shadow, QColor(0, 0, 0, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.Highlight, QColor(61, 174, 233, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.HighlightedText, QColor(239, 240, 241, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.Link, QColor(41, 128, 185, 255))
-        self.Themes["Dark"].setColor(QPalette.Active, QPalette.LinkVisited, QColor(127, 140, 141, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.Window, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.WindowText, QColor(239, 240, 241, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.Base, QColor(35, 38, 41, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.AlternateBase, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.ToolTipBase, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.ToolTipText, QColor(239, 240, 241, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.PlaceholderText, QColor(239, 240, 241, 128))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.Text, QColor(239, 240, 241, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.Button, QColor(49, 54, 59, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.ButtonText, QColor(239, 240, 241, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.BrightText, QColor(255, 255, 255, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.Light, QColor(24, 27, 29, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.Midlight, QColor(36, 40, 44, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.Dark, QColor(98, 108, 118, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.Mid, QColor(65, 72, 78, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.Shadow, QColor(0, 0, 0, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.Highlight, QColor(61, 174, 233, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.HighlightedText, QColor(239, 240, 241, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.Link, QColor(41, 128, 185, 255))
-        self.Themes["Dark"].setColor(QPalette.Inactive, QPalette.LinkVisited, QColor(127, 140, 141, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Window, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.WindowText, QColor(98, 108, 118, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Base, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.AlternateBase, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ToolTipBase, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ToolTipText, QColor(239, 240, 241, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.PlaceholderText, QColor(239, 240, 241, 128))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text, QColor(98, 108, 118, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Button, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ButtonText, QColor(98, 108, 118, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.BrightText, QColor(255, 255, 255, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Light, QColor(24, 27, 29, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Midlight, QColor(36, 40, 44, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Dark, QColor(98, 108, 118, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Mid, QColor(65, 72, 78, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Shadow, QColor(0, 0, 0, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Highlight, QColor(65, 72, 78, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.HighlightedText, QColor(36, 40, 44, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Link, QColor(41, 128, 185, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.LinkVisited, QColor(127, 140, 141, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Window, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.WindowText, QColor(239, 240, 241, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Base, QColor(35, 38, 41, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.AlternateBase, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.ToolTipBase, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.ToolTipText, QColor(239, 240, 241, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.PlaceholderText, QColor(239, 240, 241, 128))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Text, QColor(239, 240, 241, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Button, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.ButtonText, QColor(239, 240, 241, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.BrightText, QColor(255, 255, 255, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Light, QColor(24, 27, 29, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Midlight, QColor(36, 40, 44, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Dark, QColor(98, 108, 118, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Mid, QColor(65, 72, 78, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Shadow, QColor(0, 0, 0, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Highlight, QColor(61, 174, 233, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.HighlightedText, QColor(239, 240, 241, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.Link, QColor(41, 128, 185, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Active, QPalette.ColorRole.LinkVisited, QColor(127, 140, 141, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Window, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.WindowText, QColor(239, 240, 241, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Base, QColor(35, 38, 41, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.AlternateBase, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.ToolTipBase, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.ToolTipText, QColor(239, 240, 241, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.PlaceholderText, QColor(239, 240, 241, 128))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Text, QColor(239, 240, 241, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Button, QColor(49, 54, 59, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.ButtonText, QColor(239, 240, 241, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.BrightText, QColor(255, 255, 255, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Light, QColor(24, 27, 29, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Midlight, QColor(36, 40, 44, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Dark, QColor(98, 108, 118, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Mid, QColor(65, 72, 78, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Shadow, QColor(0, 0, 0, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Highlight, QColor(61, 174, 233, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.HighlightedText, QColor(239, 240, 241, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Link, QColor(41, 128, 185, 255))
+        self.Themes["Dark"].setColor(QPalette.ColorGroup.Inactive, QPalette.ColorRole.LinkVisited, QColor(127, 140, 141, 255))
 
     def LoadTheme(self):
         self.CreateThemes()
@@ -692,4 +692,4 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         Theme, OK = QInputDialog.getItem(self, "Set Theme", "Set theme (requires restart to take effect):", Themes, current=CurrentThemeIndex, editable=False)
         if OK:
             self.Theme = Theme
-            self.DisplayMessageBox("The new theme will be active after SnakeEyes is restarted.")
+            self.DisplayMessageBox(f"The new theme will be active after {self.ScriptName} is restarted.")

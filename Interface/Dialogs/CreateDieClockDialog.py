@@ -1,5 +1,5 @@
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QDialog, QGridLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QSpinBox, QSizePolicy
+from PyQt6 import QtCore
+from PyQt6.QtWidgets import QDialog, QGridLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QSpinBox, QSizePolicy
 
 from Interface.Widgets.DieTypeSpinBox import DieTypeSpinBox
 
@@ -18,11 +18,11 @@ class CreateDieClockDialog(QDialog):
         self.ComplicationThreshold = None
 
         # Inputs Size Policy
-        self.InputsSizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.InputsSizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         # Labels
         self.PromptLabel = QLabel("Create a die clock:")
-        self.PromptLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.PromptLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.NameLabel = QLabel("Name:")
         self.DieTypeLabel = QLabel("Die Type:")
         self.ComplicationThresholdLabel = QLabel("Complication Threshold:")
@@ -34,15 +34,15 @@ class CreateDieClockDialog(QDialog):
 
         self.DieTypeSpinBox = DieTypeSpinBox()
         self.DieTypeSpinBox.setSizePolicy(self.InputsSizePolicy)
-        self.DieTypeSpinBox.setAlignment(QtCore.Qt.AlignCenter)
-        self.DieTypeSpinBox.setButtonSymbols(self.DieTypeSpinBox.NoButtons)
+        self.DieTypeSpinBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.DieTypeSpinBox.setButtonSymbols(self.DieTypeSpinBox.ButtonSymbols.NoButtons)
         self.DieTypeSpinBox.setRange(1, 1000000000)
         self.DieTypeSpinBox.setValue(20)
 
         self.ComplicationThresholdSpinBox = QSpinBox()
         self.ComplicationThresholdSpinBox.setSizePolicy(self.InputsSizePolicy)
-        self.ComplicationThresholdSpinBox.setAlignment(QtCore.Qt.AlignCenter)
-        self.ComplicationThresholdSpinBox.setButtonSymbols(self.ComplicationThresholdSpinBox.NoButtons)
+        self.ComplicationThresholdSpinBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.ComplicationThresholdSpinBox.setButtonSymbols(self.ComplicationThresholdSpinBox.ButtonSymbols.NoButtons)
         self.ComplicationThresholdSpinBox.setRange(1, 1000000000)
         self.ComplicationThresholdSpinBox.setValue(5)
 
@@ -95,7 +95,7 @@ class CreateDieClockDialog(QDialog):
         self.NameLineEdit.selectAll()
 
         # Execute Dialog
-        self.exec_()
+        self.exec()
 
     def Done(self):
         if self.ValidInput(Alert=True):
@@ -111,11 +111,11 @@ class CreateDieClockDialog(QDialog):
     def ValidInput(self, Alert=False):
         if self.NameLineEdit.text() == "":
             if Alert:
-                self.MainWindow.DisplayMessageBox("Die clocks must have a name.", Icon=QMessageBox.Warning, Parent=self)
+                self.MainWindow.DisplayMessageBox("Die clocks must have a name.", Icon=QMessageBox.Icon.Warning, Parent=self)
             return False
         ComplicationThreshold = self.ComplicationThresholdSpinBox.value()
         if ComplicationThreshold < 1 or ComplicationThreshold >= self.DieTypeSpinBox.value():
             if Alert:
-                self.MainWindow.DisplayMessageBox("Complication threshold must be greater than 0 and lesser than the die type.", Icon=QMessageBox.Warning, Parent=self)
+                self.MainWindow.DisplayMessageBox("Complication threshold must be greater than 0 and lesser than the die type.", Icon=QMessageBox.Icon.Warning, Parent=self)
             return False
         return True
