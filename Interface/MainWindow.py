@@ -1,14 +1,17 @@
 import copy
 import json
 import os
+import urllib.request
 
 from PyQt6 import QtCore
 from PyQt6.QtGui import QIcon, QPalette, QColor, QAction
 from PyQt6.QtWidgets import QMainWindow, QApplication, QSizePolicy, QGridLayout, QFrame, QLabel, QTextEdit, QSpinBox, QMessageBox, QInputDialog
 
+from Build import BuildVariables
 from Core.DiceRoller import DiceRoller
 from Interface.Dialogs.CreateDieClockDialog import CreateDieClockDialog
 from Interface.Dialogs.EditPresetRollDialog import EditPresetRollDialog
+from Interface.Dialogs.UpdateDialog import UpdateDialog
 from Interface.Widgets.DieTypeSpinBox import DieTypeSpinBox
 from Interface.Widgets.IconButtons import AddButton, CopyButton, DeleteButton, EditButton, MoveDownButton, MoveUpButton, RollButton
 from Interface.Widgets.PresetRollsTreeWidget import PresetRollsTreeWidget
@@ -25,6 +28,9 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         super().__init__()
 
+        # Variables
+        self.CheckForUpdatesOnStart = True
+
         # Set Up Save and Open
         self.SetUpSaveAndOpen(".snakeeyes", "SnakeEyes Dice Roller", (DiceRoller,))
 
@@ -40,6 +46,10 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         # Update Display
         self.UpdateDisplay()
+
+        # Check for Updates
+        if self.CheckForUpdatesOnStart:
+            self.UpdateCheck()
 
     def CreateInterface(self):
         # Load Theme
@@ -197,6 +207,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.CreateKeybindings()
 
     def CreateActions(self):
+        # File Actions
         self.NewAction = QAction("New")
         self.NewAction.triggered.connect(self.NewActionTriggered)
 
@@ -220,6 +231,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.QuitAction = QAction("Quit")
         self.QuitAction.triggered.connect(self.close)
 
+        # Roller Actions
         self.RollAction = QAction("Roll")
         self.RollAction.triggered.connect(self.Roll)
 
@@ -235,6 +247,7 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.CreateDieClockAction = QAction("Create Die Clock")
         self.CreateDieClockAction.triggered.connect(self.CreateDieClock)
 
+        # Log Actions
         self.AddLogEntryAction = QAction("Add Log Entry")
         self.AddLogEntryAction.triggered.connect(self.AddLogEntry)
 
@@ -244,10 +257,19 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.ClearLogAction = QAction("Clear Log")
         self.ClearLogAction.triggered.connect(self.ClearLog)
 
+        # About Actions
+        self.CheckForUpdatesAction = QAction("Check for Updates")
+        self.CheckForUpdatesAction.triggered.connect(lambda: self.UpdateCheck(ManualCheck=True))
+
+        self.CheckForUpdatesOnStartAction = QAction("Check for Updates on Start")
+        self.CheckForUpdatesOnStartAction.setCheckable(True)
+        self.CheckForUpdatesOnStartAction.setChecked(True)
+        self.CheckForUpdatesOnStartAction.triggered.connect(self.ToggleCheckForUpdatesOnStart)
+
     def CreateMenuBar(self):
         self.MenuBar = self.menuBar()
 
-        self.FileMenu = self.MenuBar.addMenu("File")
+        self.FileMenu = self.MenuBar.addMenu("&File")
         self.FileMenu.addAction(self.NewAction)
         self.FileMenu.addAction(self.OpenAction)
         self.FileMenu.addSeparator()
@@ -260,17 +282,21 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         self.FileMenu.addSeparator()
         self.FileMenu.addAction(self.QuitAction)
 
-        self.RollerMenu = self.MenuBar.addMenu("Roller")
+        self.RollerMenu = self.MenuBar.addMenu("&Roller")
         self.RollerMenu.addAction(self.RollAction)
         self.RollerMenu.addAction(self.RollPresetRollAction)
         self.RollerMenu.addAction(self.AverageRollAction)
         self.RollerMenu.addAction(self.SetCurrentRollAsDefaultAction)
         self.RollerMenu.addAction(self.CreateDieClockAction)
 
-        self.LogMenu = self.MenuBar.addMenu("Log")
+        self.LogMenu = self.MenuBar.addMenu("&Log")
         self.LogMenu.addAction(self.AddLogEntryAction)
         self.LogMenu.addAction(self.RemoveLastLogEntryAction)
         self.LogMenu.addAction(self.ClearLogAction)
+
+        self.AboutMenu = self.MenuBar.addMenu("&About")
+        self.AboutMenu.addAction(self.CheckForUpdatesAction)
+        self.AboutMenu.addAction(self.CheckForUpdatesOnStartAction)
 
     def CreateKeybindings(self):
         self.DefaultKeybindings = {}
@@ -321,6 +347,15 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         for Action, Keybinding in self.Keybindings.items():
             getattr(self, Action).setShortcut(Keybinding)
 
+        # Check for Updates on Start
+        CheckForUpdatesOnStartFile = self.GetResourcePath("Configs/CheckForUpdatesOnStart.cfg")
+        if os.path.isfile(CheckForUpdatesOnStartFile):
+            with open(CheckForUpdatesOnStartFile, "r") as ConfigFile:
+                self.CheckForUpdatesOnStart = json.loads(ConfigFile.read())
+        else:
+            self.CheckForUpdatesOnStart = True
+        self.CheckForUpdatesOnStartAction.setChecked(self.CheckForUpdatesOnStart)
+
     def SaveConfigs(self):
         if not os.path.isdir(self.GetResourcePath("Configs")):
             os.mkdir(self.GetResourcePath("Configs"))
@@ -342,6 +377,10 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
 
         # Gzip Mode
         self.SaveGzipMode()
+
+        # Check for Updates on Start
+        with open(self.GetResourcePath("Configs/CheckForUpdatesOnStart.cfg"), "w") as ConfigFile:
+            ConfigFile.write(json.dumps(self.CheckForUpdatesOnStart))
 
     # Roller Methods
     def Roll(self):
@@ -693,3 +732,20 @@ class MainWindow(QMainWindow, SaveAndOpenMixin):
         if OK:
             self.Theme = Theme
             self.DisplayMessageBox(f"The new theme will be active after {self.ScriptName} is restarted.")
+
+    # Update Checking Methods
+    def UpdateCheck(self, ManualCheck=False):
+        try:
+            Contents = urllib.request.urlopen(f"https://api.github.com/repos/Snackhole/{BuildVariables["AppName"]}/releases").read()
+            Contents = Contents.decode("utf-8")
+            Contents = json.loads(Contents)
+            LatestVersion = Contents[0]["tag_name"]
+            if LatestVersion != BuildVariables["Version"]:
+                UpdateDialogInst = UpdateDialog(LatestVersion, self)
+            elif ManualCheck and LatestVersion == BuildVariables["Version"]:
+                self.DisplayMessageBox("You are using the latest version.")
+        except Exception as Error:
+            self.DisplayMessageBox(f"Checking for updates caused the following error:\n\n{str(Error)}.")
+
+    def ToggleCheckForUpdatesOnStart(self):
+        self.CheckForUpdatesOnStart = not self.CheckForUpdatesOnStart
